@@ -1,0 +1,4 @@
+Musique : ambient.mp3
+Auteur : générée pour ce faire-part (composition originale)
+Licence : libre de droits — usage personnel et commercial autorisé sans attribution obligatoire.
+Source : scripts/generate-ambient-music.py (regénérable à tout moment)

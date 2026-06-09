@@ -1,0 +1,23 @@
+# Environment
+.env
+
+# Database
+database/*.sqlite
+database/*.db
+
+# Uploads (keep structure)
+public/assets/uploads/*
+!public/assets/uploads/.gitkeep
+
+# IDE & OS
+.idea/
+.vscode/
+*.swp
+.DS_Thumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Vendor (if composer used later)
+vendor/

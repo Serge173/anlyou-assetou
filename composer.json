@@ -1,0 +1,12 @@
+{
+  "name": "faire-part-mariage",
+  "description": "Application web de faire-part et gestion d'invitations de mariage",
+  "require": {
+    "php": "^8.0"
+  },
+  "config": {
+    "platform": {
+      "php": "8.2"
+    }
+  }
+}
