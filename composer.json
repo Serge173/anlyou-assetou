@@ -1,5 +1,5 @@
 {
-  "name": "faire-part-mariage",
+  "name": "serge173/fairepart-mariage",
   "description": "Application web de faire-part et gestion d'invitations de mariage",
   "require": {
     "php": "^8.0"
