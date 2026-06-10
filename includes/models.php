@@ -4,6 +4,23 @@ declare(strict_types=1);
 
 function getSettings(PDO $pdo): array
 {
+    try {
+        return fetchSettingsRow($pdo);
+    } catch (PDOException $e) {
+        if (str_contains($e->getMessage(), 'cached plan must not change result type')) {
+            invalidatePostgresPlans($pdo);
+            $pdo = resetDatabaseConnection();
+            if (isPostgres($pdo)) {
+                $pdo->exec('SET search_path TO public');
+            }
+            return fetchSettingsRow($pdo);
+        }
+        throw $e;
+    }
+}
+
+function fetchSettingsRow(PDO $pdo): array
+{
     $stmt = $pdo->query('SELECT * FROM settings WHERE id = 1');
     $settings = $stmt->fetch();
     if (!$settings) {

@@ -20,6 +20,13 @@ function bootstrapDatabase(): PDO
     } catch (PDOException) {
         initializeDatabase($pdo);
     }
+
+    invalidatePostgresPlans($pdo);
+    $pdo = resetDatabaseConnection();
+    if (isPostgres($pdo)) {
+        $pdo->exec('SET search_path TO public');
+    }
+
     return $pdo;
 }
 

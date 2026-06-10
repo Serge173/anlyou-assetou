@@ -40,6 +40,8 @@ function connectPostgres(string $databaseUrl): PDO
     return new PDO($dsn, rawurldecode($parts['user'] ?? ''), rawurldecode($parts['pass'] ?? ''), [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        // Avoid "cached plan must not change result type" on Neon/PgBouncer after migrations.
+        PDO::ATTR_EMULATE_PREPARES => true,
     ]);
 }
 
@@ -73,9 +75,12 @@ function resolveDatabaseUrl(): ?string
     return null;
 }
 
-function getDatabase(): PDO
+function getDatabase(bool $reset = false): PDO
 {
     static $pdo = null;
+    if ($reset) {
+        $pdo = null;
+    }
     if ($pdo instanceof PDO) {
         return $pdo;
     }
@@ -99,6 +104,7 @@ function getDatabase(): PDO
         $pdo = new PDO($dsn, $user, $pass, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => true,
         ]);
         return $pdo;
     }
@@ -137,4 +143,22 @@ function lastInsertId(PDO $pdo, string $table): int
         return (int) $pdo->lastInsertId($table . '_id_seq');
     }
     return (int) $pdo->lastInsertId();
+}
+
+function resetDatabaseConnection(): PDO
+{
+    return getDatabase(true);
+}
+
+function invalidatePostgresPlans(PDO $pdo): void
+{
+    if (!isPostgres($pdo)) {
+        return;
+    }
+
+    try {
+        $pdo->exec('DEALLOCATE ALL');
+    } catch (PDOException) {
+        // Ignored when the pooler does not allow DEALLOCATE.
+    }
 }
