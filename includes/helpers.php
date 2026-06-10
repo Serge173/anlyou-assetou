@@ -178,6 +178,34 @@ function brandLogoUrl(): string
     return mediaUrl('assets/images/logo-fairepartdebaby.png');
 }
 
+function weddingDatetimeIso(array $settings): string
+{
+    $date = trim($settings['wedding_date'] ?? '') ?: '2026-09-15';
+    $time = trim($settings['start_time'] ?? '') ?: '14:00';
+    if (strlen($time) === 5) {
+        $time .= ':00';
+    }
+
+    return $date . 'T' . $time;
+}
+
+function countdownTitle(array $settings): string
+{
+    $title = trim($settings['countdown_title'] ?? '');
+    return $title !== '' ? $title : 'Le grand jour approche';
+}
+
+function countdownPastMessage(array $settings): string
+{
+    $message = trim($settings['countdown_message_past'] ?? '');
+    return $message !== '' ? $message : "C'est aujourd'hui — le grand jour est arrivé !";
+}
+
+function isCountdownEnabled(array $settings): bool
+{
+    return (bool) ($settings['countdown_enabled'] ?? true);
+}
+
 function handleMediaUpload(array $file, string $prefix = 'media'): ?string
 {
     if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {

@@ -157,11 +157,13 @@ $groomInitial = coupleInitial($settings['groom_name'] ?? null);
 </section>
 
 <!-- Compteur jusqu'au mariage -->
+<?php if (isCountdownEnabled($settings)): ?>
 <section id="countdown" class="countdown-section"
-    data-wedding="<?= sanitize(($settings['wedding_date'] ?? '2026-09-15') . 'T' . ($settings['start_time'] ?? '14:00') . ':00') ?>">
+    data-wedding="<?= sanitize(weddingDatetimeIso($settings)) ?>"
+    data-countdown-past="<?= sanitize(countdownPastMessage($settings)) ?>">
     <div class="container">
         <div class="countdown-glass glass-card" data-aos="fade-up">
-            <p class="countdown-label">Le grand jour approche</p>
+            <p class="countdown-label"><?= sanitize(countdownTitle($settings)) ?></p>
             <div class="countdown-grid">
                 <div class="countdown-item">
                     <span class="countdown-value" id="cdDays">—</span>
@@ -187,6 +189,7 @@ $groomInitial = coupleInitial($settings['groom_name'] ?? null);
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Section 2: Détails du mariage -->
 <section id="details" class="section-padding">

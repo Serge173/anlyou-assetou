@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => el.remove(), 4000);
     });
 
+    initCouplePreview();
+    initCountdownPreview();
+});
+
+function initCouplePreview() {
     const brideInput = document.getElementById('bride_name');
     const groomInput = document.getElementById('groom_name');
     const previewBride = document.getElementById('couplePreviewBride');
@@ -34,4 +39,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
     brideInput.addEventListener('input', updateCouplePreview);
     groomInput.addEventListener('input', updateCouplePreview);
-});
+}
+
+function initCountdownPreview() {
+    const titleInput = document.getElementById('countdown_title');
+    const dateInput = document.getElementById('wedding_date');
+    const timeInput = document.getElementById('start_time');
+    const pastInput = document.getElementById('countdown_message_past');
+    const previewTitle = document.getElementById('countdownPreviewTitle');
+    const previewDate = document.getElementById('countdownPreviewDate');
+    const previewDays = document.getElementById('countdownPreviewDays');
+    const previewHours = document.getElementById('countdownPreviewHours');
+    const previewMinutes = document.getElementById('countdownPreviewMinutes');
+    const previewSeconds = document.getElementById('countdownPreviewSeconds');
+
+    if (!titleInput || !dateInput || !timeInput || !previewTitle || !previewDays) {
+        return;
+    }
+
+    const pad = (value) => String(value).padStart(2, '0');
+
+    const formatFrenchDate = (isoDate) => {
+        if (!isoDate) {
+            return '—';
+        }
+        const parts = isoDate.split('-').map(Number);
+        if (parts.length !== 3) {
+            return isoDate;
+        }
+        const months = [
+            'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
+            'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre',
+        ];
+        return `${parts[2]} ${months[parts[1] - 1]} ${parts[0]}`;
+    };
+
+    const getTargetDate = () => {
+        const date = dateInput.value || '2026-09-15';
+        const time = timeInput.value || '14:00';
+        return new Date(`${date}T${time}:00`);
+    };
+
+    const updateCountdownPreview = () => {
+        previewTitle.textContent = titleInput.value.trim() || 'Le grand jour approche';
+        previewDate.textContent = formatFrenchDate(dateInput.value);
+
+        const target = getTargetDate();
+        const diff = target - new Date();
+
+        if (Number.isNaN(target.getTime()) || diff <= 0) {
+            previewTitle.textContent = (pastInput?.value.trim()) || "C'est aujourd'hui — le grand jour est arrivé !";
+            previewDays.textContent = '0';
+            previewHours.textContent = '00';
+            previewMinutes.textContent = '00';
+            previewSeconds.textContent = '00';
+            return;
+        }
+
+        previewDays.textContent = String(Math.floor(diff / 86400000));
+        previewHours.textContent = pad(Math.floor((diff / 3600000) % 24));
+        previewMinutes.textContent = pad(Math.floor((diff / 60000) % 60));
+        previewSeconds.textContent = pad(Math.floor((diff / 1000) % 60));
+    };
+
+    document.querySelectorAll('[data-countdown-preview]').forEach((el) => {
+        el.addEventListener('input', updateCountdownPreview);
+        el.addEventListener('change', updateCountdownPreview);
+    });
+
+    updateCountdownPreview();
+    window.setInterval(updateCountdownPreview, 1000);
+}

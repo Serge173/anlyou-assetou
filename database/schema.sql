@@ -22,6 +22,9 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
     contact_phone TEXT DEFAULT '',
     wedding_passed INTEGER DEFAULT 0,
     album_enabled INTEGER DEFAULT 0,
+    countdown_title TEXT DEFAULT 'Le grand jour approche',
+    countdown_message_past TEXT DEFAULT 'C''est aujourd''hui — le grand jour est arrivé !',
+    countdown_enabled INTEGER DEFAULT 1,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP,
     updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );

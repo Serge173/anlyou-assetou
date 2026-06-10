@@ -11,6 +11,7 @@ function getSettings(PDO $pdo): array
     }
     $settings['wedding_passed'] = (bool) ($settings['wedding_passed'] ?? false);
     $settings['album_enabled'] = (bool) ($settings['album_enabled'] ?? false);
+    $settings['countdown_enabled'] = (bool) ($settings['countdown_enabled'] ?? true);
     return $settings;
 }
 
@@ -21,6 +22,7 @@ function updateSettings(PDO $pdo, array $data): bool
         'civil_venue', 'religious_venue', 'reception_venue', 'gps_lat', 'gps_lng',
         'welcome_title', 'welcome_message', 'invitation_text', 'hero_image',
         'contact_email', 'contact_phone', 'wedding_passed', 'album_enabled',
+        'countdown_title', 'countdown_message_past', 'countdown_enabled',
     ];
     $sets = [];
     $values = [];

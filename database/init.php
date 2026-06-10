@@ -50,6 +50,18 @@ function runMigrations(PDO $pdo): void
             $pdo->exec('ALTER TABLE wedding_album ADD COLUMN section_id INTEGER');
         }
     }
+
+    if (tableExists($pdo, 'settings') && !columnExists($pdo, 'settings', 'countdown_title')) {
+        if ($isPgsql) {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN countdown_title TEXT DEFAULT 'Le grand jour approche'");
+            $pdo->exec("ALTER TABLE settings ADD COLUMN countdown_message_past TEXT DEFAULT 'C''est aujourd''hui — le grand jour est arrivé !'");
+            $pdo->exec('ALTER TABLE settings ADD COLUMN countdown_enabled BOOLEAN DEFAULT TRUE');
+        } else {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN countdown_title TEXT DEFAULT 'Le grand jour approche'");
+            $pdo->exec("ALTER TABLE settings ADD COLUMN countdown_message_past TEXT DEFAULT 'C''est aujourd''hui — le grand jour est arrivé !'");
+            $pdo->exec('ALTER TABLE settings ADD COLUMN countdown_enabled INTEGER DEFAULT 1');
+        }
+    }
 }
 
 function tableExists(PDO $pdo, string $table): bool
@@ -106,6 +118,9 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
                 contact_phone TEXT DEFAULT '',
                 wedding_passed BOOLEAN DEFAULT FALSE,
                 album_enabled BOOLEAN DEFAULT FALSE,
+                countdown_title TEXT DEFAULT 'Le grand jour approche',
+                countdown_message_past TEXT DEFAULT 'C''est aujourd''hui — le grand jour est arrivé !',
+                countdown_enabled BOOLEAN DEFAULT TRUE,
                 created_at TIMESTAMPTZ DEFAULT NOW(),
                 updated_at TIMESTAMPTZ DEFAULT NOW()
             )",
@@ -209,6 +224,9 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
             contact_phone TEXT DEFAULT '',
             wedding_passed INTEGER DEFAULT 0,
             album_enabled INTEGER DEFAULT 0,
+            countdown_title TEXT DEFAULT 'Le grand jour approche',
+            countdown_message_past TEXT DEFAULT 'C''est aujourd''hui — le grand jour est arrivé !',
+            countdown_enabled INTEGER DEFAULT 1,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             updated_at TEXT DEFAULT CURRENT_TIMESTAMP
         )",

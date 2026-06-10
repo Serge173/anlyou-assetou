@@ -164,7 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (diff <= 0) {
                 countdownEl.classList.add('is-past');
                 const label = countdownEl.querySelector('.countdown-label');
-                if (label) label.textContent = "C'est aujourd'hui — le grand jour est arrivé !";
+                const pastMessage = countdownEl.dataset.countdownPast || "C'est aujourd'hui — le grand jour est arrivé !";
+                if (label) label.textContent = pastMessage;
                 if (daysEl) daysEl.textContent = '0';
                 if (hoursEl) hoursEl.textContent = '00';
                 if (minutesEl) minutesEl.textContent = '00';

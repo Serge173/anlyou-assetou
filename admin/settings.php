@@ -25,6 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'contact_phone' => trim($_POST['contact_phone'] ?? ''),
         'wedding_passed' => isset($_POST['wedding_passed']) ? 1 : 0,
         'album_enabled' => isset($_POST['album_enabled']) ? 1 : 0,
+        'countdown_title' => trim($_POST['countdown_title'] ?? ''),
+        'countdown_message_past' => trim($_POST['countdown_message_past'] ?? ''),
+        'countdown_enabled' => isset($_POST['countdown_enabled']) ? 1 : 0,
     ];
 
     $heroPath = resolveMediaPath(
@@ -77,6 +80,56 @@ ob_start();
         </div>
     </div>
 
+    <div class="admin-card mb-4">
+        <h3><i class="bi bi-hourglass-split me-2"></i>Compte à rebours</h3>
+        <p class="text-muted mb-4">Configure la section « Le grand jour approche » affichée sur la page d'accueil. La date et l'heure servent aussi aux détails du mariage.</p>
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-7">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input type="checkbox" name="countdown_enabled" class="form-check-input" id="countdownEnabled" <?= isCountdownEnabled($settings) ? 'checked' : '' ?> data-countdown-preview>
+                            <label class="form-check-label" for="countdownEnabled">Afficher le compte à rebours sur le site</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="countdown_title">Titre de la section</label>
+                        <input id="countdown_title" name="countdown_title" class="form-control" value="<?= sanitize($settings['countdown_title'] ?? countdownTitle($settings)) ?>" placeholder="Le grand jour approche" data-countdown-preview>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="wedding_date">Date du mariage</label>
+                        <input type="date" id="wedding_date" name="wedding_date" class="form-control" value="<?= sanitize($settings['wedding_date'] ?? '') ?>" required data-countdown-preview>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="start_time">Heure du décompte</label>
+                        <input type="time" id="start_time" name="start_time" class="form-control" value="<?= sanitize($settings['start_time'] ?? '14:00') ?>" data-countdown-preview>
+                        <small class="text-muted">Le compte à rebours se termine à cette heure.</small>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="countdown_message_past">Message quand le jour est arrivé</label>
+                        <input id="countdown_message_past" name="countdown_message_past" class="form-control" value="<?= sanitize($settings['countdown_message_past'] ?? countdownPastMessage($settings)) ?>" data-countdown-preview>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="countdown-preview-card">
+                    <p class="countdown-preview-label" id="countdownPreviewTitle"><?= sanitize(countdownTitle($settings)) ?></p>
+                    <div class="countdown-preview-grid">
+                        <div><strong id="countdownPreviewDays">—</strong><span>Jours</span></div>
+                        <div class="countdown-preview-sep">:</div>
+                        <div><strong id="countdownPreviewHours">—</strong><span>Heures</span></div>
+                        <div class="countdown-preview-sep">:</div>
+                        <div><strong id="countdownPreviewMinutes">—</strong><span>Minutes</span></div>
+                        <div class="countdown-preview-sep">:</div>
+                        <div><strong id="countdownPreviewSeconds">—</strong><span>Secondes</span></div>
+                    </div>
+                    <p class="countdown-preview-date" id="countdownPreviewDate"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
+                    <p class="couple-preview-note">Aperçu du compte à rebours</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <div class="col-lg-6">
             <div class="admin-card">
@@ -97,11 +150,10 @@ ob_start();
         </div>
         <div class="col-lg-6">
             <div class="admin-card">
-                <h3>Date &amp; Lieux</h3>
+                <h3>Lieux du mariage</h3>
+                <p class="text-muted small mb-3">La date et l'heure sont configurées dans la section « Compte à rebours » ci-dessus.</p>
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Date du mariage</label><input type="date" name="wedding_date" class="form-control" value="<?= sanitize($settings['wedding_date'] ?? '') ?>"></div>
-                    <div class="col-md-3"><label class="form-label">Heure début</label><input type="time" name="start_time" class="form-control" value="<?= sanitize($settings['start_time'] ?? '') ?>"></div>
-                    <div class="col-md-3"><label class="form-label">Heure fin</label><input type="time" name="end_time" class="form-control" value="<?= sanitize($settings['end_time'] ?? '') ?>"></div>
+                    <div class="col-md-6"><label class="form-label">Heure de fin</label><input type="time" name="end_time" class="form-control" value="<?= sanitize($settings['end_time'] ?? '') ?>"></div>
                     <div class="col-12"><label class="form-label">Lieu cérémonie civile</label><input name="civil_venue" class="form-control" value="<?= sanitize($settings['civil_venue'] ?? '') ?>"></div>
                     <div class="col-12"><label class="form-label">Lieu cérémonie religieuse</label><input name="religious_venue" class="form-control" value="<?= sanitize($settings['religious_venue'] ?? '') ?>"></div>
                     <div class="col-12"><label class="form-label">Lieu réception</label><input name="reception_venue" class="form-control" value="<?= sanitize($settings['reception_venue'] ?? '') ?>"></div>
