@@ -354,7 +354,7 @@ function seedDefaultData(PDO $pdo): void
 
         $photos = [];
         foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
-            $photos[] = [$albumId, $photo['title'], $photo['url'], 1];
+            $photos[] = [$albumId, $photo['title'], $photo['path'], 1];
         }
         $photoStmt = $pdo->prepare('INSERT INTO gallery_photos (album_id, title, file_path, sort_order) VALUES (?, ?, ?, ?)');
         foreach ($photos as $photo) {

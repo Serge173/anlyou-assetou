@@ -12,28 +12,38 @@ function defaultStoryGalleryPhotos(): array
     return [
         1 => [
             'title' => 'Notre premier regard',
-            'url' => 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=900&q=80',
+            'path' => 'assets/images/gallery/story-1.jpg',
         ],
         2 => [
             'title' => 'La demande',
-            'url' => 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=900&q=80',
+            'path' => 'assets/images/gallery/story-2.jpg',
         ],
         3 => [
             'title' => 'Aventure à deux',
-            'url' => 'https://images.unsplash.com/photo-1522673607200-84343a3e1e1?auto=format&fit=crop&w=900&q=80',
+            'path' => 'assets/images/gallery/story-3.jpg',
         ],
         4 => [
             'title' => 'Anniversaire surprise',
-            'url' => 'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=900&q=80',
+            'path' => 'assets/images/gallery/story-4.jpg',
         ],
         5 => [
             'title' => 'Ensemble pour toujours',
-            'url' => 'https://images.unsplash.com/photo-1520854221256-17451cc791d2?auto=format&fit=crop&w=900&q=80',
+            'path' => 'assets/images/gallery/story-5.jpg',
         ],
         6 => [
             'title' => 'Portrait du couple',
-            'url' => 'https://images.unsplash.com/photo-1606216794074-735e91aa2a92?auto=format&fit=crop&w=900&q=80',
+            'path' => 'assets/images/gallery/story-6.jpg',
         ],
+    ];
+}
+
+/** @return list<string> Unsplash IDs retirés du CDN — à remplacer en prod */
+function brokenStoryGalleryUnsplashIds(): array
+{
+    return [
+        'photo-1522673607200-84343a3e1e1',
+        'photo-1520854221256-17451cc791d2',
+        'photo-1606216794074-735e91aa2a92',
     ];
 }
 
@@ -83,11 +93,19 @@ function upgradeDefaultMedia(PDO $pdo): void
         return;
     }
 
-    $svgCount = (int) $pdo->query("SELECT COUNT(*) FROM gallery_photos WHERE file_path LIKE '%.svg'")->fetchColumn();
-    if ($svgCount > 0) {
-        $update = $pdo->prepare('UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ? AND file_path LIKE ?');
-        foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
-            $update->execute([$photo['url'], $photo['title'], $albumId, '%.svg']);
+    $updateStoryPhoto = $pdo->prepare(
+        'UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ? AND file_path LIKE ?'
+    );
+    foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
+        $updateStoryPhoto->execute([$photo['path'], $photo['title'], $albumId, '%.svg']);
+    }
+
+    $repairStoryPhoto = $pdo->prepare(
+        'UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ? AND file_path LIKE ?'
+    );
+    foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
+        foreach (brokenStoryGalleryUnsplashIds() as $brokenId) {
+            $repairStoryPhoto->execute([$photo['path'], $photo['title'], $albumId, '%' . $brokenId . '%']);
         }
     }
 
