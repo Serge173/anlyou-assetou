@@ -686,7 +686,145 @@ section[id] {
     color: var(--color-soft-gray);
 }
 
-/* ---- Story Slider ---- */
+/* ---- Photo carousel (galeries & sections) ---- */
+.photo-carousel {
+    position: relative;
+    padding: 0 3rem;
+}
+
+.photo-carousel-viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-radius: var(--radius-card);
+}
+
+.photo-carousel-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.photo-carousel-track {
+    display: flex;
+    gap: 1rem;
+    padding: 0.25rem 0;
+}
+
+.photo-carousel-slide {
+    flex: 0 0 calc(33.333% - 0.67rem);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-width: 0;
+}
+
+.photo-carousel--hero {
+    padding: 0 3.25rem;
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-card);
+}
+
+.photo-carousel--hero .photo-carousel-viewport {
+    box-shadow: none;
+}
+
+.photo-carousel--hero .photo-carousel-slide {
+    flex: 0 0 min(400px, 88vw);
+    position: relative;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+}
+
+.photo-carousel--hero .photo-carousel-slide img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-carousel--gallery .photo-carousel-slide {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+}
+
+.photo-carousel--gallery .photo-carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-carousel-slide--video {
+    aspect-ratio: auto;
+}
+
+.photo-carousel-slide--video .wedding-album-item {
+    height: 100%;
+}
+
+.photo-carousel-slide--video video {
+    display: block;
+    max-height: 320px;
+    object-fit: cover;
+}
+
+.photo-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(201, 169, 98, 0.35);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    color: var(--color-charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-soft);
+}
+
+.photo-carousel-btn i {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.photo-carousel-btn:hover:not(:disabled) {
+    background: var(--color-gold-light);
+    border-color: var(--color-gold);
+    color: var(--color-charcoal);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.photo-carousel-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.photo-carousel-prev {
+    left: 0;
+}
+
+.photo-carousel-next {
+    right: 0;
+}
+
+.photo-carousel--static .photo-carousel-btn {
+    display: none;
+}
+
+.photo-carousel--static {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* ---- Story Slider (legacy captions) ---- */
 .story-slider {
     overflow: hidden;
     border-radius: var(--radius-card);
@@ -695,11 +833,6 @@ section[id] {
 
 .slider-track {
     display: flex;
-    animation: slideScroll 30s linear infinite;
-}
-
-.slider-track:hover {
-    animation-play-state: paused;
 }
 
 .slider-item {
@@ -725,11 +858,6 @@ section[id] {
     color: #fff;
     font-family: var(--font-serif);
     font-size: 1.1rem;
-}
-
-@keyframes slideScroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
 }
 
 /* ---- Story album sections ---- */
@@ -1081,6 +1209,27 @@ body.intro-active .scroll-to-top {
         flex: 0 0 280px;
     }
 
+    .photo-carousel {
+        padding: 0 2.5rem;
+    }
+
+    .photo-carousel-slide {
+        flex: 0 0 calc(50% - 0.5rem);
+    }
+
+    .photo-carousel--hero .photo-carousel-slide {
+        flex: 0 0 min(320px, 88vw);
+    }
+
+    .photo-carousel--hero .photo-carousel-slide img {
+        height: 220px;
+    }
+
+    .photo-carousel-btn {
+        width: 40px;
+        height: 40px;
+    }
+
     .gallery-masonry {
         column-count: 2;
     }
@@ -1114,5 +1263,22 @@ body.intro-active .scroll-to-top {
 @media (max-width: 480px) {
     .gallery-masonry {
         column-count: 1;
+    }
+
+    .photo-carousel {
+        padding: 0 2.25rem;
+    }
+
+    .photo-carousel-slide {
+        flex: 0 0 85%;
+    }
+
+    .photo-carousel-btn {
+        width: 36px;
+        height: 36px;
+    }
+
+    .photo-carousel-btn i {
+        font-size: 1.15rem;
     }
 }

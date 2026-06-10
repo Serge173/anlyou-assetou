@@ -374,15 +374,23 @@ $invitationCardBg = invitationCardImageUrl($settings);
         </div>
 
         <?php if (!empty($galleryPhotos)): ?>
-        <div class="story-slider mb-5" data-aos="fade-up">
-            <div class="slider-track" id="storySlider">
-                <?php foreach ($galleryPhotos as $photo): ?>
-                <div class="slider-item">
-                    <img src="<?= sanitize(mediaUrl($photo['file_path'])) ?>" alt="<?= sanitize($photo['title'] ?? '') ?>" loading="lazy">
-                    <div class="slider-caption"><?= sanitize($photo['title'] ?? $photo['album_name'] ?? '') ?></div>
+        <div class="photo-carousel photo-carousel--hero mb-5" data-aos="fade-up">
+            <button type="button" class="photo-carousel-btn photo-carousel-prev" aria-label="Photo précédente">
+                <i class="bi bi-chevron-left" aria-hidden="true"></i>
+            </button>
+            <div class="photo-carousel-viewport">
+                <div class="photo-carousel-track">
+                    <?php foreach ($galleryPhotos as $photo): ?>
+                    <div class="photo-carousel-slide photo-carousel-slide--hero">
+                        <img src="<?= sanitize(mediaUrl($photo['file_path'])) ?>" alt="<?= sanitize($photo['title'] ?? '') ?>" loading="lazy">
+                        <div class="slider-caption"><?= sanitize($photo['title'] ?? $photo['album_name'] ?? '') ?></div>
+                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
             </div>
+            <button type="button" class="photo-carousel-btn photo-carousel-next" aria-label="Photo suivante">
+                <i class="bi bi-chevron-right" aria-hidden="true"></i>
+            </button>
         </div>
         <?php endif; ?>
 
@@ -395,15 +403,25 @@ $invitationCardBg = invitationCardImageUrl($settings);
                 <p class="story-album-desc"><?= sanitize($album['description']) ?></p>
                 <?php endif; ?>
             </div>
-            <div class="gallery-masonry">
-                <?php foreach ($album['photos'] as $i => $photo): ?>
-                <a href="<?= sanitize(mediaUrl($photo['file_path'])) ?>" class="gallery-item glightbox masonry-item masonry-h-<?= ($i % 3) + 1 ?>" data-gallery="story-<?= (int) $album['id'] ?>" data-aos="fade-up" data-aos-delay="<?= ($i % 6) * 80 ?>">
-                    <img src="<?= sanitize(mediaUrl($photo['file_path'])) ?>" alt="<?= sanitize($photo['title'] ?? '') ?>" loading="lazy">
-                    <div class="gallery-overlay">
-                        <span><?= sanitize($photo['title'] ?? '') ?></span>
+            <div class="photo-carousel photo-carousel--gallery">
+                <button type="button" class="photo-carousel-btn photo-carousel-prev" aria-label="Photo précédente">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div class="photo-carousel-viewport">
+                    <div class="photo-carousel-track">
+                        <?php foreach ($album['photos'] as $i => $photo): ?>
+                        <a href="<?= sanitize(mediaUrl($photo['file_path'])) ?>" class="gallery-item glightbox photo-carousel-slide" data-gallery="story-<?= (int) $album['id'] ?>" data-aos="fade-up" data-aos-delay="<?= ($i % 6) * 80 ?>">
+                            <img src="<?= sanitize(mediaUrl($photo['file_path'])) ?>" alt="<?= sanitize($photo['title'] ?? '') ?>" loading="lazy">
+                            <div class="gallery-overlay">
+                                <span><?= sanitize($photo['title'] ?? '') ?></span>
+                            </div>
+                        </a>
+                        <?php endforeach; ?>
                     </div>
-                </a>
-                <?php endforeach; ?>
+                </div>
+                <button type="button" class="photo-carousel-btn photo-carousel-next" aria-label="Photo suivante">
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <?php endforeach; ?>
@@ -441,26 +459,38 @@ $invitationCardBg = invitationCardImageUrl($settings);
                 <p class="story-album-desc"><?= sanitize($section['description']) ?></p>
                 <?php endif; ?>
             </div>
-            <div class="gallery-masonry wedding-masonry">
-                <?php foreach ($section['media'] as $i => $item): ?>
-                <?php if (($item['media_type'] ?? 'image') === 'video'): ?>
-                <div class="wedding-album-item glass-card masonry-item masonry-h-2">
-                    <video controls class="w-100">
-                        <source src="<?= sanitize(mediaUrl($item['file_path'])) ?>" type="video/mp4">
-                    </video>
-                    <div class="wedding-album-info">
-                        <h4><?= sanitize($item['title'] ?? '') ?></h4>
+            <div class="photo-carousel photo-carousel--gallery">
+                <button type="button" class="photo-carousel-btn photo-carousel-prev" aria-label="Photo précédente">
+                    <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div class="photo-carousel-viewport">
+                    <div class="photo-carousel-track">
+                        <?php foreach ($section['media'] as $i => $item): ?>
+                        <?php if (($item['media_type'] ?? 'image') === 'video'): ?>
+                        <div class="photo-carousel-slide photo-carousel-slide--video">
+                            <div class="wedding-album-item glass-card">
+                                <video controls class="w-100">
+                                    <source src="<?= sanitize(mediaUrl($item['file_path'])) ?>" type="video/mp4">
+                                </video>
+                                <div class="wedding-album-info">
+                                    <h4><?= sanitize($item['title'] ?? '') ?></h4>
+                                </div>
+                            </div>
+                        </div>
+                        <?php else: ?>
+                        <a href="<?= sanitize(mediaUrl($item['file_path'])) ?>" class="gallery-item glightbox photo-carousel-slide" data-gallery="wedding-<?= (int) $section['id'] ?>">
+                            <img src="<?= sanitize(mediaUrl($item['file_path'])) ?>" alt="<?= sanitize($item['title'] ?? '') ?>" loading="lazy">
+                            <div class="gallery-overlay">
+                                <span><?= sanitize($item['title'] ?? '') ?></span>
+                            </div>
+                        </a>
+                        <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-                <?php else: ?>
-                <a href="<?= sanitize(mediaUrl($item['file_path'])) ?>" class="gallery-item glightbox masonry-item masonry-h-<?= ($i % 3) + 1 ?>" data-gallery="wedding-<?= (int) $section['id'] ?>">
-                    <img src="<?= sanitize(mediaUrl($item['file_path'])) ?>" alt="<?= sanitize($item['title'] ?? '') ?>" loading="lazy">
-                    <div class="gallery-overlay">
-                        <span><?= sanitize($item['title'] ?? '') ?></span>
-                    </div>
-                </a>
-                <?php endif; ?>
-                <?php endforeach; ?>
+                <button type="button" class="photo-carousel-btn photo-carousel-next" aria-label="Photo suivante">
+                    <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                </button>
             </div>
         </div>
         <?php endforeach; ?>

@@ -611,22 +611,26 @@ body:not(.intro-active) .site-music-toggle.is-playing {
 }
 
 /* ---- 4. Galerie Premium ---- */
+.photo-carousel .gallery-item,
 .gallery-masonry .gallery-item {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 0.5s ease;
 }
 
+.photo-carousel .gallery-item:hover,
 .gallery-masonry .gallery-item:hover {
     transform: translateY(-6px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
     z-index: 2;
 }
 
+.photo-carousel .gallery-item img,
 .gallery-masonry .gallery-item img {
     transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.photo-carousel .gallery-item:hover img,
 .gallery-masonry .gallery-item:hover img {
     transform: scale(1.06);
 }

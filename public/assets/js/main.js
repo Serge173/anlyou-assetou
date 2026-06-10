@@ -1,4 +1,52 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const initPhotoCarousels = () => {
+        document.querySelectorAll('.photo-carousel').forEach((carousel) => {
+            const viewport = carousel.querySelector('.photo-carousel-viewport');
+            const prev = carousel.querySelector('.photo-carousel-prev');
+            const next = carousel.querySelector('.photo-carousel-next');
+            if (!viewport) return;
+
+            const getStep = () => {
+                const slide = viewport.querySelector('.photo-carousel-slide');
+                if (!slide) return viewport.clientWidth;
+                const track = viewport.querySelector('.photo-carousel-track');
+                const gap = track ? parseFloat(getComputedStyle(track).gap) || 16 : 16;
+                return slide.getBoundingClientRect().width + gap;
+            };
+
+            const updateButtons = () => {
+                const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+                const canScroll = maxScroll > 4;
+                carousel.classList.toggle('photo-carousel--static', !canScroll);
+                if (!canScroll) return;
+                prev?.toggleAttribute('disabled', viewport.scrollLeft <= 4);
+                next?.toggleAttribute('disabled', viewport.scrollLeft >= maxScroll - 4);
+            };
+
+            const scrollByStep = (direction) => {
+                viewport.scrollBy({ left: direction * getStep(), behavior: 'smooth' });
+            };
+
+            prev?.addEventListener('click', () => scrollByStep(-1));
+            next?.addEventListener('click', () => scrollByStep(1));
+            viewport.addEventListener('scroll', updateButtons, { passive: true });
+            window.addEventListener('resize', updateButtons);
+
+            carousel.querySelectorAll('img').forEach((img) => {
+                if (!img.complete) {
+                    img.addEventListener('load', updateButtons, { once: true });
+                }
+            });
+
+            if (typeof ResizeObserver !== 'undefined') {
+                const ro = new ResizeObserver(updateButtons);
+                ro.observe(viewport);
+            }
+
+            updateButtons();
+        });
+    };
+
     const initSite = () => {
         AOS.init({ duration: 800, once: true, offset: 80 });
 
@@ -9,6 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
             openEffect: 'zoom',
             closeEffect: 'fade',
         });
+
+        initPhotoCarousels();
     };
 
     if (document.getElementById('mainSite')?.classList.contains('is-visible')) {
@@ -45,11 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
-    const slider = document.getElementById('storySlider');
-    if (slider) {
-        slider.innerHTML = slider.innerHTML + slider.innerHTML;
-    }
 
     const showAlert = (el, message, type = 'success') => {
         el.textContent = message;

@@ -178,7 +178,7 @@
     };
 
     const initGalleryPremium = () => {
-        document.querySelectorAll('.gallery-masonry .gallery-item').forEach(item => {
+        document.querySelectorAll('.photo-carousel .gallery-item, .gallery-masonry .gallery-item').forEach(item => {
             item.addEventListener('click', () => {
                 item.classList.add('is-opening');
                 setTimeout(() => item.classList.remove('is-opening'), 350);
