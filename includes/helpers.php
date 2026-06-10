@@ -173,6 +173,11 @@ function mediaUrl(?string $path): string
     return '/' . ltrim($path, '/');
 }
 
+function brandLogoUrl(): string
+{
+    return mediaUrl('assets/images/logo-fairepartdebaby.png');
+}
+
 function handleMediaUpload(array $file, string $prefix = 'media'): ?string
 {
     if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {

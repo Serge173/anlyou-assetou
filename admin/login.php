@@ -26,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion — Administration</title>
+    <title>Connexion — Fairepartdebaby</title>
+    <link rel="icon" type="image/png" href="<?= sanitize(brandLogoUrl()) ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="/assets/css/admin.css" rel="stylesheet">
@@ -34,9 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="login-page">
     <div class="login-card">
         <div class="login-header">
-            <i class="bi bi-heart-fill"></i>
-            <h1>Faire-Part Admin</h1>
-            <p>Connectez-vous pour gérer votre mariage</p>
+            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="Fairepartdebaby" class="brand-logo">
+            <p>Connectez-vous pour gérer votre faire-part</p>
         </div>
 
         <?php if ($error !== ''): ?>

@@ -52,7 +52,6 @@ body {
     letter-spacing: 0.18em;
     color: rgba(255,255,255,0.55);
     text-transform: uppercase;
-    padding-left: 1.65rem;
 }
 
 .sidebar-brand i { color: var(--admin-accent); }
@@ -199,6 +198,29 @@ body {
     width: 100%;
     max-width: 400px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.login-header .brand-logo {
+    height: 130px;
+    width: auto;
+    max-width: 100%;
+    display: block;
+    margin: 0 auto 1rem;
+    object-fit: contain;
+}
+
+.sidebar-brand-logo {
+    height: 52px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+.brand-logo {
+    height: auto;
+    width: auto;
+    object-fit: contain;
 }
 
 .login-header {

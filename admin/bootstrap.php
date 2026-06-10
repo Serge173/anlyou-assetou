@@ -24,7 +24,8 @@ function adminLayout(string $title, string $content, string $activePage = ''): v
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= sanitize($title) ?> — Administration</title>
+    <title><?= sanitize($title) ?> — Fairepartdebaby</title>
+    <link rel="icon" type="image/png" href="<?= sanitize(brandLogoUrl()) ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="/assets/css/admin.css" rel="stylesheet">
@@ -33,8 +34,8 @@ function adminLayout(string $title, string $content, string $activePage = ''): v
 <div class="admin-wrapper">
     <aside class="admin-sidebar">
         <div class="sidebar-brand">
+            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="Fairepartdebaby" class="sidebar-brand-logo">
             <span class="sidebar-brand-title">
-                <i class="bi bi-heart-fill"></i>
                 <?php if ($coupleNames !== ''): ?>
                 <?= sanitize($coupleNames) ?>
                 <?php else: ?>
