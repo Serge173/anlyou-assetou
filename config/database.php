@@ -16,6 +16,26 @@ function normalizeDatabaseUrl(?string $url): ?string
     return $url;
 }
 
+function resolveDatabaseUrl(): ?string
+{
+    $candidates = [
+        getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? null),
+        getenv('POSTGRES_URL') ?: ($_ENV['POSTGRES_URL'] ?? null),
+        getenv('POSTGRES_URL_NON_POOLING') ?: ($_ENV['POSTGRES_URL_NON_POOLING'] ?? null),
+        getenv('POSTGRES_PRISMA_URL') ?: ($_ENV['POSTGRES_PRISMA_URL'] ?? null),
+        getenv('NEON_DATABASE_URL') ?: ($_ENV['NEON_DATABASE_URL'] ?? null),
+    ];
+
+    foreach ($candidates as $url) {
+        $normalized = normalizeDatabaseUrl($url);
+        if ($normalized && str_starts_with($normalized, 'pgsql')) {
+            return $normalized;
+        }
+    }
+
+    return null;
+}
+
 function getDatabase(): PDO
 {
     static $pdo = null;
@@ -23,10 +43,10 @@ function getDatabase(): PDO
         return $pdo;
     }
 
-    $databaseUrl = normalizeDatabaseUrl(getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? null));
+    $databaseUrl = resolveDatabaseUrl();
     $driver = getenv('DB_DRIVER') ?: ($_ENV['DB_DRIVER'] ?? null);
 
-    if ($databaseUrl && str_starts_with($databaseUrl, 'pgsql')) {
+    if ($databaseUrl) {
         $pdo = new PDO($databaseUrl, null, null, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -47,6 +67,10 @@ function getDatabase(): PDO
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]);
         return $pdo;
+    }
+
+    if (isServerless()) {
+        throw new RuntimeException('Configure DATABASE_URL or POSTGRES_URL for production.');
     }
 
     $dbPath = __DIR__ . '/../database/fairepart.sqlite';
