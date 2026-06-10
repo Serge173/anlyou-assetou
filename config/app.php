@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'name' => 'Faire-Part Mariage',
+    'name' => 'Invitationdebaby',
     'url' => getenv('APP_URL') ?: 'http://localhost:8080',
     'debug' => (bool) (getenv('APP_DEBUG') ?: true),
     'session_name' => 'fairepart_session',

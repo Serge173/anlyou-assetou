@@ -14,7 +14,7 @@ ob_start();
 <div class="couple-dashboard-banner mb-4">
     <div>
         <h2><?= sanitize($coupleNames) ?></h2>
-        <p>Faire-part de <?= sanitize($coupleNames) ?> — modifiable dans les paramètres</p>
+        <p>Invitation de <?= sanitize($coupleNames) ?> — modifiable dans les paramètres</p>
     </div>
     <a href="/admin/settings.php" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Modifier les noms</a>
 </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= sanitize(coupleLabel($settings) ?: 'Notre Mariage') ?> — Fairepartdebaby</title>
+    <title><?= sanitize(coupleLabel($settings) ?: 'Notre Mariage') ?> — Invitationdebaby</title>
     <link rel="icon" type="image/png" href="<?= sanitize(brandLogoUrl()) ?>">
     <meta name="description" content="Invitation de mariage<?= coupleLabel($settings) !== '' ? ' de ' . sanitize(coupleLabel($settings, ' et ')) : '' ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,7 +98,7 @@ $groomInitial = coupleInitial($settings['groom_name'] ?? null);
 <nav id="mainNav" class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand" href="#hero">
-            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="<?= sanitize(coupleLabel($settings) ?: 'Fairepartdebaby') ?>" class="brand-logo">
+            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="<?= sanitize(coupleLabel($settings) ?: 'Invitationdebaby') ?>" class="brand-logo">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>

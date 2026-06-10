@@ -175,7 +175,7 @@ function mediaUrl(?string $path): string
 
 function brandLogoUrl(): string
 {
-    return mediaUrl('assets/images/logo-fairepartdebaby.png');
+    return mediaUrl('assets/images/logo-invitationdebaby.png');
 }
 
 function weddingDatetimeIso(array $settings): string

@@ -1,6 +1,6 @@
-# Faire-Part Mariage
+# Invitationdebaby
 
-Application web de faire-part de mariage avec RSVP, livre d'or et galeries photos.
+Application web d'invitations de mariage avec RSVP, livre d'or et galeries photos.
 
 ## Déploiement Vercel + Neon PostgreSQL
 
@@ -22,14 +22,14 @@ git push -u origin main
 ### 3. Déployer sur Vercel
 
 1. Importez le repo sur [vercel.com/new](https://vercel.com/new)
-2. Nommez le projet **`fairepartdebaby`** (URL : `https://fairepartdebaby.vercel.app`)
+2. Nommez le projet **`invitationdebaby`** (URL : `https://invitationdebaby.vercel.app`)
 3. Ajoutez les **variables d'environnement** :
 
 | Variable | Valeur |
 |----------|--------|
 | `DATABASE_URL` | Votre URL Neon (`postgresql://...`) |
 | `DB_DRIVER` | `pgsql` |
-| `APP_URL` | `https://fairepartdebaby.vercel.app` |
+| `APP_URL` | `https://invitationdebaby.vercel.app` |
 | `APP_DEBUG` | `false` |
 
 3. Déployez — Vercel utilise `vercel.json` avec le runtime `vercel-php@0.6.2`
@@ -48,18 +48,18 @@ php database/init.php
 
 ### 5. Accès admin
 
-- URL : `https://fairepartdebaby.vercel.app/admin/login.php`
+- URL : `https://invitationdebaby.vercel.app/admin/login.php`
 - Identifiants : `admin` / `admin123` (à changer !)
 
 ---
 
-## Changer l’URL Vercel (ex. `mariage-amira-serge` → `fairepartdebaby`)
+## Changer l’URL Vercel (ex. `mariage-amira-serge` → `invitationdebaby`)
 
-L’URL par défaut est `{nom-du-projet}.vercel.app`. Pour obtenir **fairepartdebaby.vercel.app** :
+L’URL par défaut est `{nom-du-projet}.vercel.app`. Pour obtenir **invitationdebaby.vercel.app** :
 
 1. Ouvrez [vercel.com/dashboard](https://vercel.com/dashboard)
-2. Ouvrez le projet du faire-part → **Settings → General → Project Name** → saisissez `fairepartdebaby` → Save
-3. **Settings → Environment Variables** → mettez `APP_URL` à `https://fairepartdebaby.vercel.app`
+2. Ouvrez le projet du faire-part → **Settings → General → Project Name** → saisissez `invitationdebaby` → Save
+3. **Settings → Environment Variables** → mettez `APP_URL` à `https://invitationdebaby.vercel.app`
 4. Redéployez (Deployments → … → Redeploy)
 
 ---
