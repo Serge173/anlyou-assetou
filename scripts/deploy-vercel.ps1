@@ -17,14 +17,10 @@ Write-Host "==> Variables d'environnement..."
 "pgsql" | vercel env add DB_DRIVER production --force
 "false" | vercel env add APP_DEBUG production --force
 $DatabaseUrl | vercel env add DATABASE_URL production --force
+"https://fairepart.vercel.app" | vercel env add APP_URL production --force
 
 Write-Host "==> Déploiement production..."
 vercel deploy --prod --yes
-
-$Url = (vercel ls 2>&1 | Select-String "https://.*\.vercel\.app" | Select-Object -First 1).ToString().Trim()
-if ($Url) {
-    $Url | vercel env add APP_URL production --force
-}
 
 Write-Host "==> Initialisation Neon..."
 $env:DATABASE_URL = $DatabaseUrl
