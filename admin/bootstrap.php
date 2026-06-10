@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 
 function adminLayout(string $title, string $content, string $activePage = ''): void
 {
-    $settings = getSettings(getDatabase());
+    $settings = getSettings(bootstrapDatabase());
     $coupleNames = coupleLabel($settings);
     $coupleMonogram = coupleInitials($settings);
 
