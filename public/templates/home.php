@@ -118,7 +118,7 @@ $invitationCardBg = invitationCardImageUrl($settings);
 </nav>
 
 <!-- Section 1: Hero -->
-<section id="hero" class="hero-section" style="background-image: url('<?= sanitize(mediaUrl($settings['hero_image'] ?? 'assets/images/hero.svg')) ?>')">
+<section id="hero" class="hero-section" style="background-image: url('<?= sanitize(mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath())) ?>')">
     <div class="hero-overlay"></div>
     <div class="hero-content text-center" data-aos="fade-up" data-aos-duration="1200">
         <p class="hero-subtitle"><?= sanitize($settings['welcome_title'] ?? 'Bienvenue à notre mariage') ?></p>

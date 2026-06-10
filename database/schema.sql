@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS settings (
     invitation_text TEXT DEFAULT 'Si vous avez reçu ce lien, c''est que vous êtes notre heureux invité ou notre heureuse invitée VVIP.
 
 Nous vous invitons à célébrer avec nous ce jour unique.',
-    hero_image TEXT DEFAULT 'assets/images/hero.jpg',
+    hero_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
     invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
     contact_email TEXT DEFAULT '',
     contact_phone TEXT DEFAULT '',

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/default-media.php';
 
 function initializeDatabase(PDO $pdo): void
 {
@@ -71,6 +72,8 @@ function runMigrations(PDO $pdo): void
         }
         $pdo->exec("UPDATE settings SET invitation_card_image = 'assets/images/invitation-card-bg.png' WHERE id = 1 AND (invitation_card_image IS NULL OR invitation_card_image = '')");
     }
+
+    upgradeDefaultMedia($pdo);
 }
 
 function tableExists(PDO $pdo, string $table): bool
@@ -122,7 +125,7 @@ function getSchemaStatements(bool $isPgsql): array
                 invitation_text TEXT DEFAULT 'Si vous avez reçu ce lien, c''est que vous êtes notre heureux invité ou notre heureuse invitée VVIP.
 
 Nous vous invitons à célébrer avec nous ce jour unique.',
-                hero_image TEXT DEFAULT 'assets/images/hero.svg',
+                hero_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
                 invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
                 contact_email TEXT DEFAULT '',
                 contact_phone TEXT DEFAULT '',
@@ -229,7 +232,7 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
             invitation_text TEXT DEFAULT 'Si vous avez reçu ce lien, c''est que vous êtes notre heureux invité ou notre heureuse invitée VVIP.
 
 Nous vous invitons à célébrer avec nous ce jour unique.',
-            hero_image TEXT DEFAULT 'assets/images/hero.svg',
+            hero_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
             invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
             contact_email TEXT DEFAULT '',
             contact_phone TEXT DEFAULT '',
@@ -349,14 +352,10 @@ function seedDefaultData(PDO $pdo): void
             $stmt->execute($album);
         }
 
-        $photos = [
-            [1, 'Notre premier regard', 'assets/images/gallery/story-1.svg', 1],
-            [2, 'La demande', 'assets/images/gallery/story-2.svg', 1],
-            [3, 'Aventure à Venise', 'assets/images/gallery/story-3.svg', 1],
-            [4, 'Anniversaire surprise', 'assets/images/gallery/story-4.svg', 1],
-            [5, 'Ensemble pour toujours', 'assets/images/gallery/story-5.svg', 1],
-            [6, 'Portrait du couple', 'assets/images/gallery/story-6.svg', 1],
-        ];
+        $photos = [];
+        foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
+            $photos[] = [$albumId, $photo['title'], $photo['url'], 1];
+        }
         $photoStmt = $pdo->prepare('INSERT INTO gallery_photos (album_id, title, file_path, sort_order) VALUES (?, ?, ?, ?)');
         foreach ($photos as $photo) {
             $photoStmt->execute($photo);
@@ -375,6 +374,8 @@ function seedDefaultData(PDO $pdo): void
         foreach ($sections as $section) {
             $stmt->execute($section);
         }
+
+        upgradeDefaultMedia($pdo);
     }
 }
 

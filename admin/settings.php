@@ -180,17 +180,18 @@ ob_start();
     <div class="row g-4">
         <div class="col-lg-6">
             <div class="admin-card">
-                <h3>Photo principale</h3>
+                <h3>Photo principale (Hero)</h3>
+                <p class="text-muted mb-3">Même photo que la carte d'invitation par défaut. Sur Vercel, collez une URL d'image.</p>
                 <div class="row g-3">
                     <div class="col-12">
-                        <label class="form-label">Photo principale (Hero)</label>
+                        <label class="form-label">Photo Hero</label>
                         <?php if (!isServerless()): ?>
                         <input type="file" name="hero_image" class="form-control mb-2" accept="image/*">
                         <?php endif; ?>
                         <input type="url" name="hero_image_url" class="form-control" placeholder="https://... (URL de l'image)" value="<?= str_starts_with($settings['hero_image'] ?? '', 'http') ? sanitize($settings['hero_image']) : '' ?>">
                     </div>
                     <?php if (!empty($settings['hero_image'])): ?>
-                    <div class="col-12"><img src="<?= sanitize(mediaUrl($settings['hero_image'])) ?>" style="max-height:120px;border-radius:4px" alt="Aperçu hero"></div>
+                    <div class="col-12"><img src="<?= sanitize(mediaUrl($settings['hero_image'])) ?>" style="max-height:160px;border-radius:8px;object-fit:cover;width:100%;max-width:280px" alt="Aperçu hero"></div>
                     <?php endif; ?>
                 </div>
             </div>
