@@ -22,14 +22,14 @@ git push -u origin main
 ### 3. Déployer sur Vercel
 
 1. Importez le repo sur [vercel.com/new](https://vercel.com/new)
-2. Nommez le projet **`fairepart`** (URL : `https://fairepart.vercel.app`)
+2. Nommez le projet **`fairepartdebaby`** (URL : `https://fairepartdebaby.vercel.app`)
 3. Ajoutez les **variables d'environnement** :
 
 | Variable | Valeur |
 |----------|--------|
 | `DATABASE_URL` | Votre URL Neon (`postgresql://...`) |
 | `DB_DRIVER` | `pgsql` |
-| `APP_URL` | `https://fairepart.vercel.app` |
+| `APP_URL` | `https://fairepartdebaby.vercel.app` |
 | `APP_DEBUG` | `false` |
 
 3. Déployez — Vercel utilise `vercel.json` avec le runtime `vercel-php@0.6.2`
@@ -48,20 +48,19 @@ php database/init.php
 
 ### 5. Accès admin
 
-- URL : `https://fairepart.vercel.app/admin/login.php`
+- URL : `https://fairepartdebaby.vercel.app/admin/login.php`
 - Identifiants : `admin` / `admin123` (à changer !)
 
 ---
 
-## Changer l’URL Vercel (ex. `mariage-amira-serge` → `fairepart`)
+## Changer l’URL Vercel (ex. `mariage-amira-serge` → `fairepartdebaby`)
 
-L’URL par défaut est `{nom-du-projet}.vercel.app`. Pour obtenir **fairepart.vercel.app** :
+L’URL par défaut est `{nom-du-projet}.vercel.app`. Pour obtenir **fairepartdebaby.vercel.app** :
 
 1. Ouvrez [vercel.com/dashboard](https://vercel.com/dashboard)
-2. Si un autre projet utilise déjà `fairepart`, **renommez-le ou supprimez-le** (Settings → General → Project Name)
-3. Ouvrez le projet du faire-part → **Settings → General → Project Name** → saisissez `fairepart` → Save
-4. **Settings → Environment Variables** → mettez `APP_URL` à `https://fairepart.vercel.app`
-5. Redéployez (Deployments → … → Redeploy)
+2. Ouvrez le projet du faire-part → **Settings → General → Project Name** → saisissez `fairepartdebaby` → Save
+3. **Settings → Environment Variables** → mettez `APP_URL` à `https://fairepartdebaby.vercel.app`
+4. Redéployez (Deployments → … → Redeploy)
 
 ---
 

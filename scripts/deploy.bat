@@ -15,7 +15,7 @@ echo Ajoutez ces variables sur https://vercel.com (Settings - Environment Variab
 echo   DATABASE_URL = votre URL Neon postgresql://...
 echo   DB_DRIVER = pgsql
 echo   APP_DEBUG = false
-echo   APP_URL = https://fairepart.vercel.app
+echo   APP_URL = https://fairepartdebaby.vercel.app
 echo.
 echo Puis initialisez la base :
 echo   set DATABASE_URL=postgresql://...
