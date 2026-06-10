@@ -40,6 +40,7 @@
 <?php
 $brideInitial = coupleInitial($settings['bride_name'] ?? null);
 $groomInitial = coupleInitial($settings['groom_name'] ?? null);
+$invitationCardBg = invitationCardImageUrl($settings);
 ?>
 
 <!-- 1. Écran de chargement cinématographique -->
@@ -73,7 +74,7 @@ $groomInitial = coupleInitial($settings['groom_name'] ?? null);
     <div class="invite-scene">
         <div class="invite-card" id="inviteCard">
             <div class="invite-cover">
-                <div class="invite-cover-front">
+                <div class="invite-cover-front<?= $invitationCardBg ? ' invite-cover-front--photo' : '' ?>"<?php if ($invitationCardBg): ?> style="background-image: url('<?= sanitize($invitationCardBg) ?>')"<?php endif; ?>>
                     <span class="invite-cover-monogram"><?= sanitize($brideInitial) ?></span>
                     <span class="invite-cover-ampersand">&amp;</span>
                     <span class="invite-cover-monogram"><?= sanitize($groomInitial) ?></span>

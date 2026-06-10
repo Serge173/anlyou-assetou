@@ -62,6 +62,15 @@ function runMigrations(PDO $pdo): void
             $pdo->exec('ALTER TABLE settings ADD COLUMN countdown_enabled INTEGER DEFAULT 1');
         }
     }
+
+    if (tableExists($pdo, 'settings') && !columnExists($pdo, 'settings', 'invitation_card_image')) {
+        if ($isPgsql) {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png'");
+        } else {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png'");
+        }
+        $pdo->exec("UPDATE settings SET invitation_card_image = 'assets/images/invitation-card-bg.png' WHERE id = 1 AND (invitation_card_image IS NULL OR invitation_card_image = '')");
+    }
 }
 
 function tableExists(PDO $pdo, string $table): bool
@@ -114,6 +123,7 @@ function getSchemaStatements(bool $isPgsql): array
 
 Nous vous invitons à célébrer avec nous ce jour unique.',
                 hero_image TEXT DEFAULT 'assets/images/hero.svg',
+                invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
                 contact_email TEXT DEFAULT '',
                 contact_phone TEXT DEFAULT '',
                 wedding_passed BOOLEAN DEFAULT FALSE,
@@ -220,6 +230,7 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
 
 Nous vous invitons à célébrer avec nous ce jour unique.',
             hero_image TEXT DEFAULT 'assets/images/hero.svg',
+            invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
             contact_email TEXT DEFAULT '',
             contact_phone TEXT DEFAULT '',
             wedding_passed INTEGER DEFAULT 0,

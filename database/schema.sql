@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS settings (
 
 Nous vous invitons à célébrer avec nous ce jour unique.',
     hero_image TEXT DEFAULT 'assets/images/hero.jpg',
+    invitation_card_image TEXT DEFAULT 'assets/images/invitation-card-bg.png',
     contact_email TEXT DEFAULT '',
     contact_phone TEXT DEFAULT '',
     wedding_passed INTEGER DEFAULT 0,

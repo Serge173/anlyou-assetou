@@ -206,6 +206,16 @@ function isCountdownEnabled(array $settings): bool
     return (bool) ($settings['countdown_enabled'] ?? true);
 }
 
+function invitationCardImageUrl(array $settings): ?string
+{
+    $path = trim($settings['invitation_card_image'] ?? '');
+    if ($path === '') {
+        return null;
+    }
+
+    return mediaUrl($path);
+}
+
 function handleMediaUpload(array $file, string $prefix = 'media'): ?string
 {
     if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {

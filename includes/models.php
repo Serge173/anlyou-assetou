@@ -38,6 +38,7 @@ function updateSettings(PDO $pdo, array $data): bool
         'bride_name', 'groom_name', 'wedding_date', 'start_time', 'end_time',
         'civil_venue', 'religious_venue', 'reception_venue', 'gps_lat', 'gps_lng',
         'welcome_title', 'welcome_message', 'invitation_text', 'hero_image',
+        'invitation_card_image',
         'contact_email', 'contact_phone', 'wedding_passed', 'album_enabled',
         'countdown_title', 'countdown_message_past', 'countdown_enabled',
     ];

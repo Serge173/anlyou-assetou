@@ -38,6 +38,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $data['hero_image'] = $heroPath;
     }
 
+    if (!empty($_POST['remove_invitation_card_image'])) {
+        $data['invitation_card_image'] = '';
+    } else {
+        $cardPath = resolveMediaPath(
+            handleMediaUpload($_FILES['invitation_card_image'] ?? [], 'invite_card'),
+            $_POST['invitation_card_image_url'] ?? ''
+        );
+        if ($cardPath) {
+            $data['invitation_card_image'] = $cardPath;
+        }
+    }
+
     updateSettings($pdo, $data);
     $settings = getSettings($pdo);
     $saved = true;
@@ -126,6 +138,41 @@ ob_start();
                     <p class="countdown-preview-date" id="countdownPreviewDate"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
                     <p class="couple-preview-note">Aperçu du compte à rebours</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-card mb-4">
+        <h3><i class="bi bi-envelope-heart me-2"></i>Carte d'invitation 3D</h3>
+        <p class="text-muted mb-4">Photo de fond affichée sur la couverture de la carte (écran d'ouverture). Sur Vercel, utilisez une URL d'image (Cloudinary, ImgBB…).</p>
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-7">
+                <?php if (!isServerless()): ?>
+                <div class="mb-3">
+                    <label class="form-label">Changer la photo</label>
+                    <input type="file" name="invitation_card_image" class="form-control" accept="image/*">
+                </div>
+                <?php endif; ?>
+                <div class="mb-3">
+                    <label class="form-label">URL de l'image</label>
+                    <input type="url" name="invitation_card_image_url" class="form-control" placeholder="https://..." value="<?= str_starts_with($settings['invitation_card_image'] ?? '', 'http') ? sanitize($settings['invitation_card_image']) : '' ?>">
+                </div>
+                <?php if (!empty($settings['invitation_card_image'])): ?>
+                <div class="form-check">
+                    <input type="checkbox" name="remove_invitation_card_image" class="form-check-input" id="removeInvitationCardImage" value="1">
+                    <label class="form-check-label text-danger" for="removeInvitationCardImage">Supprimer la photo (fond par défaut)</label>
+                </div>
+                <?php endif; ?>
+            </div>
+            <div class="col-lg-5">
+                <?php if ($previewCard = invitationCardImageUrl($settings)): ?>
+                <div class="invite-card-preview">
+                    <img src="<?= sanitize($previewCard) ?>" alt="Aperçu carte d'invitation">
+                    <span class="invite-card-preview-label">Aperçu couverture</span>
+                </div>
+                <?php else: ?>
+                <p class="text-muted mb-0">Aucune photo — fond sombre par défaut.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
