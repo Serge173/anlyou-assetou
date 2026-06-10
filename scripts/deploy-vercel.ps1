@@ -19,6 +19,9 @@ Write-Host "==> Variables d'environnement..."
 $DatabaseUrl | vercel env add DATABASE_URL production --force
 "https://invitationdebaby.vercel.app" | vercel env add APP_URL production --force
 
+Write-Host "==> Build assets production..."
+php scripts/build-prod-assets.php
+
 Write-Host "==> Déploiement production..."
 vercel deploy --prod --yes
 

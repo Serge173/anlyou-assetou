@@ -8,7 +8,35 @@
       "maxDuration": 30
     }
   },
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), browsing-topics=()" },
+        { "key": "X-Download-Options", "value": "noopen" },
+        { "key": "X-Permitted-Cross-Domain-Policies", "value": "none" },
+        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
+        { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" }
+      ]
+    }
+  ],
   "routes": [
+    { "src": "/robots.txt", "dest": "/public/robots.txt" },
+    { "src": "/\\.env(.*)", "status": 404 },
+    { "src": "/\\.git(.*)", "status": 404 },
+    { "src": "/composer\\.(json|lock)", "status": 404 },
+    { "src": "/(includes|config|database|scripts|vendor|templates)/(.*)", "status": 404 },
     { "src": "/assets/(.*)", "dest": "/public/assets/$1" },
     { "src": "/(.*)", "dest": "/api/index.php" }
   ]

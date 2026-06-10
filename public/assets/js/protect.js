@@ -1,0 +1,65 @@
+(function () {
+    'use strict';
+
+    var allowSelector = 'input, textarea, select, button, a, [contenteditable="true"], [data-allow-interaction]';
+
+    function isAllowed(target) {
+        return target && typeof target.closest === 'function' && target.closest(allowSelector);
+    }
+
+    document.documentElement.classList.add('site-protected');
+
+    document.addEventListener('contextmenu', function (event) {
+        if (!isAllowed(event.target)) {
+            event.preventDefault();
+        }
+    }, true);
+
+    document.addEventListener('keydown', function (event) {
+        var key = (event.key || '').toLowerCase();
+        var ctrl = event.ctrlKey || event.metaKey;
+
+        if (ctrl && (key === 's' || key === 'u' || key === 'p')) {
+            event.preventDefault();
+            return;
+        }
+
+        if (ctrl && event.shiftKey && (key === 'i' || key === 'j' || key === 'c' || key === 'k')) {
+            event.preventDefault();
+            return;
+        }
+
+        if (key === 'f12') {
+            event.preventDefault();
+        }
+    }, true);
+
+    ['copy', 'cut'].forEach(function (type) {
+        document.addEventListener(type, function (event) {
+            if (!isAllowed(event.target)) {
+                event.preventDefault();
+            }
+        }, true);
+    });
+
+    document.addEventListener('dragstart', function (event) {
+        if (event.target instanceof HTMLImageElement || event.target instanceof HTMLVideoElement) {
+            event.preventDefault();
+        }
+    }, true);
+
+    var devtoolsOpen = false;
+    var threshold = 150;
+
+    setInterval(function () {
+        var widthGap = window.outerWidth - window.innerWidth;
+        var heightGap = window.outerHeight - window.innerHeight;
+        var open = widthGap > threshold || heightGap > threshold;
+
+        if (open && !devtoolsOpen && typeof console.clear === 'function') {
+            console.clear();
+        }
+
+        devtoolsOpen = open;
+    }, 1200);
+})();

@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="icon" type="image/png" href="<?= sanitize(brandLogoUrl()) ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="/assets/css/admin.css" rel="stylesheet">
+    <link href="<?= sanitize(assetUrl('assets/css/admin.css')) ?>" rel="stylesheet">
 </head>
 <body class="login-page">
     <div class="login-card">

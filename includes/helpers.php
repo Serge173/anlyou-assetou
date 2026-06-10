@@ -173,6 +173,21 @@ function mediaUrl(?string $path): string
     return '/' . ltrim($path, '/');
 }
 
+function assetUrl(string $relativePath): string
+{
+    $relativePath = ltrim($relativePath, '/');
+    $fullPath = publicRoot() . '/' . $relativePath;
+
+    if (isProductionSite() && is_file($fullPath)) {
+        $minPath = preg_replace('/\.(js|css)$/', '.min.$1', $relativePath);
+        if ($minPath !== null && is_file(publicRoot() . '/' . $minPath)) {
+            return mediaUrl($minPath);
+        }
+    }
+
+    return mediaUrl($relativePath);
+}
+
 function brandLogoUrl(): string
 {
     return mediaUrl('assets/images/logo-invitationdebaby.png');

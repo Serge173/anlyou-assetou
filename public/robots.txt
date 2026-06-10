@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /includes/
+Disallow: /config/
+Disallow: /database/
+Disallow: /scripts/
+Disallow: /templates/
+Disallow: /.env

@@ -13,8 +13,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet">
-    <link href="/assets/css/style.css" rel="stylesheet">
-    <link href="/assets/css/experience.css" rel="stylesheet">
+    <meta name="robots" content="noarchive, nosnippet">
+    <link href="<?= sanitize(assetUrl('assets/css/style.css')) ?>" rel="stylesheet">
+    <link href="<?= sanitize(assetUrl('assets/css/experience.css')) ?>" rel="stylesheet">
+    <?php if (isProductionSite()): ?>
+    <link href="<?= sanitize(assetUrl('assets/css/protect.css')) ?>" rel="stylesheet">
+    <?php endif; ?>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="100" class="intro-active">
 
@@ -584,7 +588,10 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-<script src="/assets/js/experience.js"></script>
-<script src="/assets/js/main.js"></script>
+<?php if (isProductionSite()): ?>
+<script src="<?= sanitize(assetUrl('assets/js/protect.js')) ?>" defer></script>
+<?php endif; ?>
+<script src="<?= sanitize(assetUrl('assets/js/experience.js')) ?>" defer></script>
+<script src="<?= sanitize(assetUrl('assets/js/main.js')) ?>" defer></script>
 </body>
 </html>

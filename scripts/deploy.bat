@@ -5,6 +5,11 @@ vercel login
 if errorlevel 1 exit /b 1
 
 echo.
+echo === Build assets production ===
+php scripts\build-prod-assets.php
+if errorlevel 1 exit /b 1
+
+echo.
 echo === Deploiement production ===
 vercel deploy --prod --yes
 if errorlevel 1 exit /b 1
