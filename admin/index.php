@@ -5,9 +5,21 @@ declare(strict_types=1);
 require_once __DIR__ . '/bootstrap.php';
 $pdo = initAdmin();
 $stats = getDashboardStats($pdo);
+$settings = getSettings($pdo);
+$coupleNames = coupleLabel($settings);
 
 ob_start();
 ?>
+<?php if ($coupleNames !== ''): ?>
+<div class="couple-dashboard-banner mb-4">
+    <div>
+        <h2><?= sanitize($coupleNames) ?></h2>
+        <p>Faire-part de <?= sanitize($coupleNames) ?> — modifiable dans les paramètres</p>
+    </div>
+    <a href="/admin/settings.php" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Modifier les noms</a>
+</div>
+<?php endif; ?>
+
 <div class="row g-4 mb-4">
     <div class="col-md-4 col-lg-2">
         <div class="stat-card">

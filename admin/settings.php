@@ -46,14 +46,42 @@ ob_start();
 <div class="alert alert-success">Paramètres enregistrés avec succès.</div>
 <?php endif; ?>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data" class="couple-names-form">
+    <div class="admin-card mb-4">
+        <h3><i class="bi bi-heart me-2"></i>Noms des mariés</h3>
+        <p class="text-muted mb-4">Ces prénoms apparaissent sur le site public : intro cinématique, carte d'invitation, en-tête, page d'accueil et pied de page.</p>
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-7">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="bride_name">Prénom de la mariée</label>
+                        <input id="bride_name" name="bride_name" class="form-control form-control-lg" value="<?= sanitize($settings['bride_name'] ?? '') ?>" required data-couple-preview>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="groom_name">Prénom du marié</label>
+                        <input id="groom_name" name="groom_name" class="form-control form-control-lg" value="<?= sanitize($settings['groom_name'] ?? '') ?>" required data-couple-preview>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="couple-preview-card">
+                    <div class="couple-preview-monogram" id="couplePreviewMonogram"><?= sanitize(coupleInitials($settings)) ?></div>
+                    <p class="couple-preview-names" id="couplePreviewNames">
+                        <span id="couplePreviewBride"><?= sanitize($settings['bride_name'] ?? '') ?></span>
+                        <span class="preview-amp">&amp;</span>
+                        <span id="couplePreviewGroom"><?= sanitize($settings['groom_name'] ?? '') ?></span>
+                    </p>
+                    <p class="couple-preview-note">Aperçu tel qu'affiché sur le faire-part</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row g-4">
         <div class="col-lg-6">
             <div class="admin-card">
-                <h3>Informations du couple</h3>
+                <h3>Photo principale</h3>
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Prénom mariée</label><input name="bride_name" class="form-control" value="<?= sanitize($settings['bride_name'] ?? '') ?>" required></div>
-                    <div class="col-md-6"><label class="form-label">Prénom marié</label><input name="groom_name" class="form-control" value="<?= sanitize($settings['groom_name'] ?? '') ?>" required></div>
                     <div class="col-12">
                         <label class="form-label">Photo principale (Hero)</label>
                         <?php if (!isServerless()): ?>
@@ -62,7 +90,7 @@ ob_start();
                         <input type="url" name="hero_image_url" class="form-control" placeholder="https://... (URL de l'image)" value="<?= str_starts_with($settings['hero_image'] ?? '', 'http') ? sanitize($settings['hero_image']) : '' ?>">
                     </div>
                     <?php if (!empty($settings['hero_image'])): ?>
-                    <div class="col-12"><img src="<?= sanitize(mediaUrl($settings['hero_image'])) ?>" style="max-height:120px;border-radius:4px"></div>
+                    <div class="col-12"><img src="<?= sanitize(mediaUrl($settings['hero_image'])) ?>" style="max-height:120px;border-radius:4px" alt="Aperçu hero"></div>
                     <?php endif; ?>
                 </div>
             </div>

@@ -64,6 +64,46 @@ function sanitize(string $value): string
     return htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
 }
 
+function coupleInitial(?string $name): string
+{
+    $name = trim($name ?? '');
+    if ($name === '') {
+        return '';
+    }
+
+    return mb_strtoupper(mb_substr($name, 0, 1));
+}
+
+function coupleLabel(array $settings, string $separator = ' & '): string
+{
+    $bride = trim($settings['bride_name'] ?? '');
+    $groom = trim($settings['groom_name'] ?? '');
+
+    if ($bride === '' && $groom === '') {
+        return '';
+    }
+    if ($bride === '') {
+        return $groom;
+    }
+    if ($groom === '') {
+        return $bride;
+    }
+
+    return $bride . $separator . $groom;
+}
+
+function coupleInitials(array $settings): string
+{
+    $bride = coupleInitial($settings['bride_name'] ?? null);
+    $groom = coupleInitial($settings['groom_name'] ?? null);
+
+    if ($bride === '' && $groom === '') {
+        return '';
+    }
+
+    return $bride . '&' . $groom;
+}
+
 function csrfToken(): string
 {
     if (empty($_SESSION['csrf_token'])) {

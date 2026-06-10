@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= sanitize($settings['bride_name'] ?? '') ?> & <?= sanitize($settings['groom_name'] ?? '') ?> — Notre Mariage</title>
-    <meta name="description" content="Invitation de mariage de <?= sanitize($settings['bride_name'] ?? '') ?> et <?= sanitize($settings['groom_name'] ?? '') ?>">
+    <title><?= sanitize(coupleLabel($settings) ?: 'Notre Mariage') ?> — Notre Mariage</title>
+    <meta name="description" content="Invitation de mariage<?= coupleLabel($settings) !== '' ? ' de ' . sanitize(coupleLabel($settings, ' et ')) : '' ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -37,8 +37,8 @@
 </button>
 
 <?php
-$brideInitial = mb_substr($settings['bride_name'] ?? 'A', 0, 1);
-$groomInitial = mb_substr($settings['groom_name'] ?? 'S', 0, 1);
+$brideInitial = coupleInitial($settings['bride_name'] ?? null);
+$groomInitial = coupleInitial($settings['groom_name'] ?? null);
 ?>
 
 <!-- 1. Écran de chargement cinématographique -->
@@ -81,7 +81,7 @@ $groomInitial = mb_substr($settings['groom_name'] ?? 'S', 0, 1);
             </div>
             <div class="invite-inside">
                 <span class="invite-inside-label">Vous êtes notre invité au mariage de&nbsp;:</span>
-                <h2 class="invite-inside-names"><?= sanitize($settings['bride_name'] ?? 'Amira') ?><br>&amp; <?= sanitize($settings['groom_name'] ?? 'Serge') ?></h2>
+                <h2 class="invite-inside-names"><?= sanitize($settings['bride_name'] ?? '') ?><br>&amp; <?= sanitize($settings['groom_name'] ?? '') ?></h2>
                 <p class="invite-inside-date"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
                 <button type="button" class="btn btn-gold invite-enter-btn" id="inviteEnterBtn">
                     Découvrir l'invitation
@@ -97,7 +97,7 @@ $groomInitial = mb_substr($settings['groom_name'] ?? 'S', 0, 1);
 <nav id="mainNav" class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand" href="#hero">
-            <span class="brand-initials"><?= mb_substr($settings['bride_name'] ?? 'A', 0, 1) ?>&amp;<?= mb_substr($settings['groom_name'] ?? 'S', 0, 1) ?></span>
+            <span class="brand-initials"><?= sanitize(coupleInitials($settings)) ?></span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
@@ -121,9 +121,9 @@ $groomInitial = mb_substr($settings['groom_name'] ?? 'S', 0, 1);
     <div class="hero-content text-center" data-aos="fade-up" data-aos-duration="1200">
         <p class="hero-subtitle"><?= sanitize($settings['welcome_title'] ?? 'Bienvenue à notre mariage') ?></p>
         <h1 class="hero-names">
-            <?= sanitize($settings['bride_name'] ?? 'Amira') ?>
+            <?= sanitize($settings['bride_name'] ?? '') ?>
             <span class="ampersand">&amp;</span>
-            <?= sanitize($settings['groom_name'] ?? 'Serge') ?>
+            <?= sanitize($settings['groom_name'] ?? '') ?>
         </h1>
         <div class="hero-divider"><span>♥</span></div>
         <p class="hero-message"><?= sanitize($settings['welcome_message'] ?? '') ?></p>

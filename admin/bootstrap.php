@@ -6,6 +6,10 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 
 function adminLayout(string $title, string $content, string $activePage = ''): void
 {
+    $settings = getSettings(getDatabase());
+    $coupleNames = coupleLabel($settings);
+    $coupleMonogram = coupleInitials($settings);
+
     $pages = [
         'dashboard' => ['icon' => 'speedometer2', 'label' => 'Tableau de bord', 'url' => '/admin/'],
         'confirmations' => ['icon' => 'people', 'label' => 'Présences', 'url' => '/admin/confirmations.php'],
@@ -29,8 +33,17 @@ function adminLayout(string $title, string $content, string $activePage = ''): v
 <div class="admin-wrapper">
     <aside class="admin-sidebar">
         <div class="sidebar-brand">
-            <i class="bi bi-heart-fill"></i>
-            <span>Faire-Part Admin</span>
+            <span class="sidebar-brand-title">
+                <i class="bi bi-heart-fill"></i>
+                <?php if ($coupleNames !== ''): ?>
+                <?= sanitize($coupleNames) ?>
+                <?php else: ?>
+                Faire-Part Admin
+                <?php endif; ?>
+            </span>
+            <?php if ($coupleMonogram !== ''): ?>
+            <small class="sidebar-couple-initials"><?= sanitize($coupleMonogram) ?></small>
+            <?php endif; ?>
         </div>
         <nav class="sidebar-nav">
             <?php foreach ($pages as $key => $page): ?>
