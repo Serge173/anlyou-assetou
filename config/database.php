@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../config/database.php';
-
 function normalizeDatabaseUrl(?string $url): ?string
 {
     if (!$url) {
@@ -31,6 +29,16 @@ function resolveDatabaseUrl(): ?string
         if ($normalized && str_starts_with($normalized, 'pgsql')) {
             return $normalized;
         }
+    }
+
+    $host = getenv('PGHOST') ?: getenv('POSTGRES_HOST') ?: ($_ENV['PGHOST'] ?? $_ENV['POSTGRES_HOST'] ?? null);
+    $user = getenv('PGUSER') ?: getenv('POSTGRES_USER') ?: ($_ENV['PGUSER'] ?? $_ENV['POSTGRES_USER'] ?? null);
+    $password = getenv('PGPASSWORD') ?: getenv('POSTGRES_PASSWORD') ?: ($_ENV['PGPASSWORD'] ?? $_ENV['POSTGRES_PASSWORD'] ?? null);
+    $database = getenv('PGDATABASE') ?: getenv('POSTGRES_DATABASE') ?: ($_ENV['PGDATABASE'] ?? $_ENV['POSTGRES_DATABASE'] ?? null);
+
+    if ($host && $user && $database) {
+        $passwordPart = rawurlencode((string) $password);
+        return "pgsql://{$user}:{$passwordPart}@{$host}/{$database}?sslmode=require";
     }
 
     return null;
