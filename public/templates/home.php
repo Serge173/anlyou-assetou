@@ -41,6 +41,7 @@
 $brideInitial = coupleInitial($settings['bride_name'] ?? null);
 $groomInitial = coupleInitial($settings['groom_name'] ?? null);
 $invitationCardBg = invitationCardImageUrl($settings);
+$heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 ?>
 
 <!-- 1. Écran de chargement cinématographique -->
@@ -118,7 +119,11 @@ $invitationCardBg = invitationCardImageUrl($settings);
 </nav>
 
 <!-- Section 1: Hero -->
-<section id="hero" class="hero-section" style="background-image: url('<?= sanitize(mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath())) ?>')">
+<section id="hero" class="hero-section">
+    <div class="hero-media" aria-hidden="true">
+        <img class="hero-media-fill" src="<?= sanitize($heroImageUrl) ?>" alt="">
+        <img class="hero-media-main" src="<?= sanitize($heroImageUrl) ?>" alt="">
+    </div>
     <div class="hero-overlay"></div>
     <div class="hero-content text-center" data-aos="fade-up" data-aos-duration="1200">
         <p class="hero-subtitle"><?= sanitize($settings['welcome_title'] ?? 'Bienvenue à notre mariage') ?></p>

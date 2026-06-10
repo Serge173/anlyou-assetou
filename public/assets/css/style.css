@@ -187,13 +187,61 @@ section[id] {
     justify-content: center;
     padding-top: calc(var(--navbar-height) + 2rem);
     padding-bottom: 5rem;
-    background: url('/assets/images/hero.svg') center/cover no-repeat fixed;
     overflow: hidden;
+    background: var(--color-charcoal);
+}
+
+.hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.hero-media-fill,
+.hero-media-main {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.hero-media-fill {
+    object-fit: cover;
+    object-position: center;
+    filter: blur(28px) brightness(0.45) saturate(1.1);
+    transform: scale(1.12);
+}
+
+.hero-media-main {
+    z-index: 1;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (min-width: 992px) {
+    .hero-section {
+        min-height: clamp(520px, 92vh, 960px);
+    }
+
+    .hero-media-main {
+        object-fit: contain;
+        object-position: center center;
+    }
+}
+
+@media (min-width: 1400px) {
+    .hero-section {
+        min-height: clamp(560px, 88vh, 900px);
+    }
 }
 
 .hero-overlay {
     position: absolute;
     inset: 0;
+    z-index: 1;
+    pointer-events: none;
     background:
         linear-gradient(
             to bottom,
@@ -737,9 +785,21 @@ section[id] {
 
 .photo-carousel--hero .photo-carousel-slide img {
     width: 100%;
-    height: 280px;
+    height: clamp(220px, 32vw, 360px);
     object-fit: cover;
-    display: block;
+    object-position: center;
+}
+
+@media (min-width: 992px) {
+    .photo-carousel--hero .photo-carousel-slide {
+        flex: 0 0 min(480px, 42vw);
+    }
+
+    .photo-carousel--hero .photo-carousel-slide img {
+        height: clamp(280px, 28vw, 420px);
+        object-fit: contain;
+        background: var(--color-charcoal);
+    }
 }
 
 .photo-carousel--gallery .photo-carousel-slide {
@@ -1187,9 +1247,14 @@ body.intro-active .scroll-to-top {
     }
 
     .hero-section {
-        background-attachment: scroll;
+        min-height: 100svh;
         padding-top: calc(var(--navbar-height) + 1.25rem);
         padding-bottom: 4rem;
+    }
+
+    .hero-media-main {
+        object-fit: cover;
+        object-position: center 20%;
     }
 
     .hero-content {
@@ -1218,11 +1283,11 @@ body.intro-active .scroll-to-top {
     }
 
     .photo-carousel--hero .photo-carousel-slide {
-        flex: 0 0 min(320px, 88vw);
+        flex: 0 0 min(300px, 88vw);
     }
 
     .photo-carousel--hero .photo-carousel-slide img {
-        height: 220px;
+        height: clamp(200px, 52vw, 260px);
     }
 
     .photo-carousel-btn {
