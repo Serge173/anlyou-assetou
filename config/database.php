@@ -7,11 +7,40 @@ function normalizeDatabaseUrl(?string $url): ?string
     if (!$url) {
         return null;
     }
-    // Neon uses postgres:// — PDO requires pgsql://
+    // Neon / Vercel use postgres:// or postgresql:// — PDO requires a DSN string
     if (str_starts_with($url, 'postgres://')) {
         return 'pgsql://' . substr($url, 11);
     }
+    if (str_starts_with($url, 'postgresql://')) {
+        return 'pgsql://' . substr($url, 13);
+    }
     return $url;
+}
+
+function connectPostgres(string $databaseUrl): PDO
+{
+    $url = str_starts_with($databaseUrl, 'pgsql://')
+        ? 'postgres://' . substr($databaseUrl, 8)
+        : $databaseUrl;
+
+    $parts = parse_url($url);
+    if ($parts === false || empty($parts['host'])) {
+        throw new RuntimeException('Invalid Postgres connection URL.');
+    }
+
+    parse_str($parts['query'] ?? '', $query);
+    $dsn = sprintf(
+        'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s',
+        $parts['host'],
+        $parts['port'] ?? 5432,
+        ltrim($parts['path'] ?? '', '/'),
+        $query['sslmode'] ?? 'require'
+    );
+
+    return new PDO($dsn, rawurldecode($parts['user'] ?? ''), rawurldecode($parts['pass'] ?? ''), [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ]);
 }
 
 function resolveDatabaseUrl(): ?string
@@ -55,10 +84,7 @@ function getDatabase(): PDO
     $driver = getenv('DB_DRIVER') ?: ($_ENV['DB_DRIVER'] ?? null);
 
     if ($databaseUrl) {
-        $pdo = new PDO($databaseUrl, null, null, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+        $pdo = connectPostgres($databaseUrl);
         $pdo->exec('SET search_path TO public');
         return $pdo;
     }
