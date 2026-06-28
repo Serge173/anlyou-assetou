@@ -45,6 +45,55 @@ function appConfig(): array
     return $config;
 }
 
+function siteUrl(): string
+{
+    return rtrim((string) (appConfig()['url'] ?? ''), '/');
+}
+
+function invitationSiteUrl(): string
+{
+    return siteUrl() . '/';
+}
+
+function defaultInvitationShareMessage(array $settings): string
+{
+    $couple = coupleLabel($settings);
+    $date = formatFrenchDate($settings['wedding_date'] ?? '');
+    $startTime = trim($settings['start_time'] ?? '');
+    $dateLine = $date;
+    if ($startTime !== '') {
+        $dateLine .= ' à ' . substr($startTime, 0, 5);
+    }
+
+    return "Bonjour,\n\n"
+        . "C'est avec une immense joie que nous vous invitons à célébrer notre mariage.\n\n"
+        . "💍 {$couple}\n"
+        . "📅 {$dateLine}\n\n"
+        . "Consultez votre invitation et confirmez votre présence via le lien ci-dessous.\n\n"
+        . "Votre présence sera notre plus belle joie.\n\n"
+        . "Avec toute notre affection,\n"
+        . "{$couple}";
+}
+
+function invitationShareMessage(array $settings): string
+{
+    $custom = trim($settings['invitation_share_message'] ?? '');
+
+    return $custom !== '' ? $custom : defaultInvitationShareMessage($settings);
+}
+
+function invitationShareText(array $settings): string
+{
+    $message = invitationShareMessage($settings);
+    $link = invitationSiteUrl();
+
+    if (str_contains($message, $link) || str_contains($message, siteUrl())) {
+        return $message;
+    }
+
+    return $message . "\n\n🔗 " . $link;
+}
+
 function jsonResponse(array $data, int $status = 200): void
 {
     http_response_code($status);

@@ -7,9 +7,26 @@ $pdo = initAdmin();
 $stats = getDashboardStats($pdo);
 $settings = getSettings($pdo);
 $coupleNames = coupleLabel($settings);
+$invitationLink = invitationSiteUrl();
+$invitationMessage = invitationShareMessage($settings);
+$invitationFullText = invitationShareText($settings);
+$messageSaved = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save_invitation_message') {
+    updateSettings($pdo, [
+        'invitation_share_message' => trim($_POST['invitation_share_message'] ?? ''),
+    ]);
+    $settings = getSettings($pdo);
+    $invitationMessage = invitationShareMessage($settings);
+    $invitationFullText = invitationShareText($settings);
+    $messageSaved = true;
+}
 
 ob_start();
 ?>
+<?php if ($messageSaved): ?>
+<div class="alert alert-success">Texte d'invitation enregistré.</div>
+<?php endif; ?>
 <?php if ($coupleNames !== ''): ?>
 <div class="couple-dashboard-banner mb-4">
     <div>
@@ -19,6 +36,47 @@ ob_start();
     <a href="/admin/settings.php" class="btn btn-outline-primary"><i class="bi bi-pencil me-1"></i> Modifier les noms</a>
 </div>
 <?php endif; ?>
+
+<div class="admin-card invite-share-card mb-4">
+    <div class="invite-share-header">
+        <div>
+            <h3><i class="bi bi-send me-2"></i>Partager l'invitation</h3>
+            <p class="text-muted mb-0">Copiez le lien et le message à envoyer à vos invités (WhatsApp, SMS, e-mail…)</p>
+        </div>
+    </div>
+
+    <div class="invite-share-link mb-4">
+        <label class="form-label" for="invitationLink">Lien de l'invitation</label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="invitationLink" value="<?= sanitize($invitationLink) ?>" readonly>
+            <button type="button" class="btn btn-primary" id="copyInvitationLink" data-copy-target="invitationLink">
+                <i class="bi bi-link-45deg me-1"></i> Copier le lien
+            </button>
+        </div>
+        <small class="text-success copy-feedback d-none" data-copy-feedback="invitationLink">Lien copié !</small>
+    </div>
+
+    <form method="POST" class="invite-share-form">
+        <input type="hidden" name="action" value="save_invitation_message">
+        <label class="form-label" for="invitationMessage">Texte d'invitation</label>
+        <textarea class="form-control invite-share-textarea" id="invitationMessage" name="invitation_share_message" rows="12"><?= htmlspecialchars(trim($settings['invitation_share_message'] ?? '') !== '' ? ($settings['invitation_share_message'] ?? '') : invitationShareMessage($settings), ENT_QUOTES, 'UTF-8') ?></textarea>
+        <p class="text-muted small mt-2 mb-3">Le lien sera ajouté automatiquement à la fin si vous copiez le message complet. Personnalisez le texte puis enregistrez.</p>
+        <textarea class="visually-hidden" id="invitationFullText" readonly><?= sanitize($invitationFullText) ?></textarea>
+        <div class="invite-share-actions">
+            <button type="submit" class="btn btn-outline-primary">
+                <i class="bi bi-check-lg me-1"></i> Enregistrer le texte
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="copyInvitationMessage" data-copy-textarea="invitationMessage">
+                <i class="bi bi-chat-left-text me-1"></i> Copier le texte
+            </button>
+            <button type="button" class="btn btn-gold" id="copyInvitationFull" data-invitation-link="<?= sanitize($invitationLink) ?>">
+                <i class="bi bi-clipboard-check me-1"></i> Copier message + lien
+            </button>
+        </div>
+        <small class="text-success copy-feedback d-none" data-copy-feedback="invitationMessage">Texte copié !</small>
+        <small class="text-success copy-feedback d-none" data-copy-feedback="invitationFull">Message complet copié !</small>
+    </form>
+</div>
 
 <div class="row g-4 mb-4">
     <div class="col-md-4 col-lg-2">

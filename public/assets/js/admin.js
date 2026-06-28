@@ -5,7 +5,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initCouplePreview();
     initCountdownPreview();
+    initInvitationShare();
 });
+
+async function copyToClipboard(text) {
+    if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return;
+    }
+
+    const helper = document.createElement('textarea');
+    helper.value = text;
+    helper.setAttribute('readonly', '');
+    helper.style.position = 'fixed';
+    helper.style.opacity = '0';
+    document.body.appendChild(helper);
+    helper.select();
+    document.execCommand('copy');
+    helper.remove();
+}
+
+function showCopyFeedback(key) {
+    const feedback = document.querySelector(`[data-copy-feedback="${key}"]`);
+    if (!feedback) {
+        return;
+    }
+    feedback.classList.remove('d-none');
+    window.setTimeout(() => feedback.classList.add('d-none'), 2200);
+}
+
+function initInvitationShare() {
+    const linkInput = document.getElementById('invitationLink');
+    const messageInput = document.getElementById('invitationMessage');
+    const copyLinkBtn = document.getElementById('copyInvitationLink');
+    const copyMessageBtn = document.getElementById('copyInvitationMessage');
+    const copyFullBtn = document.getElementById('copyInvitationFull');
+
+    if (!linkInput || !messageInput) {
+        return;
+    }
+
+    const buildFullMessage = () => {
+        const link = linkInput.value.trim();
+        const message = messageInput.value.trim();
+        if (!message) {
+            return link;
+        }
+        if (message.includes(link)) {
+            return message;
+        }
+        return `${message}\n\n🔗 ${link}`;
+    };
+
+    copyLinkBtn?.addEventListener('click', async () => {
+        await copyToClipboard(linkInput.value.trim());
+        showCopyFeedback('invitationLink');
+    });
+
+    copyMessageBtn?.addEventListener('click', async () => {
+        await copyToClipboard(messageInput.value.trim());
+        showCopyFeedback('invitationMessage');
+    });
+
+    copyFullBtn?.addEventListener('click', async () => {
+        await copyToClipboard(buildFullMessage());
+        showCopyFeedback('invitationFull');
+    });
+}
 
 function initCouplePreview() {
     const brideInput = document.getElementById('bride_name');

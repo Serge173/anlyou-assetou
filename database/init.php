@@ -81,6 +81,14 @@ function runMigrations(PDO $pdo): void
         }
     }
 
+    if (tableExists($pdo, 'settings') && !columnExists($pdo, 'settings', 'invitation_share_message')) {
+        if ($isPgsql) {
+            $pdo->exec('ALTER TABLE settings ADD COLUMN invitation_share_message TEXT DEFAULT NULL');
+        } else {
+            $pdo->exec('ALTER TABLE settings ADD COLUMN invitation_share_message TEXT DEFAULT NULL');
+        }
+    }
+
     upgradeDefaultMedia($pdo);
     migrateAssetouWeddingDetails($pdo);
 }

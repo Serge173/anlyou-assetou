@@ -394,6 +394,47 @@ body {
     color: #888;
 }
 
+.invite-share-card {
+    border: 1px solid rgba(201, 162, 39, 0.25);
+    background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+}
+
+.invite-share-header h3 {
+    margin-bottom: 0.35rem;
+    font-size: 1.15rem;
+}
+
+.invite-share-textarea {
+    font-family: inherit;
+    line-height: 1.55;
+    resize: vertical;
+    min-height: 220px;
+}
+
+.invite-share-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.btn-gold {
+    background: var(--admin-accent);
+    border: 1px solid var(--admin-accent);
+    color: #0a1628;
+    font-weight: 600;
+}
+
+.btn-gold:hover {
+    background: #b8921f;
+    border-color: #b8921f;
+    color: #0a1628;
+}
+
+.copy-feedback {
+    display: block;
+    margin-top: 0.5rem;
+}
+
 @media (max-width: 768px) {
     .admin-sidebar { width: 100%; position: relative; }
     .admin-main { margin-left: 0; }

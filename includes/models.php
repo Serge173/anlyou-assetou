@@ -41,6 +41,7 @@ function updateSettings(PDO $pdo, array $data): bool
         'invitation_card_image', 'ambient_music',
         'contact_email', 'contact_phone', 'wedding_passed', 'album_enabled',
         'countdown_title', 'countdown_message_past', 'countdown_enabled',
+        'invitation_share_message',
     ];
     $sets = [];
     $values = [];
