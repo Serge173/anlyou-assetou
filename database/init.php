@@ -110,8 +110,8 @@ function getSchemaStatements(bool $isPgsql): array
         return [
             "CREATE TABLE IF NOT EXISTS settings (
                 id SERIAL PRIMARY KEY,
-                bride_name TEXT NOT NULL DEFAULT 'Amira',
-                groom_name TEXT NOT NULL DEFAULT 'Serge',
+                bride_name TEXT NOT NULL DEFAULT 'Koné Assetou',
+                groom_name TEXT NOT NULL DEFAULT 'Kone Anlyou',
                 wedding_date TEXT NOT NULL DEFAULT '2026-09-15',
                 start_time TEXT NOT NULL DEFAULT '14:00',
                 end_time TEXT NOT NULL DEFAULT '23:00',
@@ -217,8 +217,8 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
     return [
         "CREATE TABLE IF NOT EXISTS settings (
             id INTEGER PRIMARY KEY,
-            bride_name TEXT NOT NULL DEFAULT 'Amira',
-            groom_name TEXT NOT NULL DEFAULT 'Serge',
+            bride_name TEXT NOT NULL DEFAULT 'Koné Assetou',
+            groom_name TEXT NOT NULL DEFAULT 'Kone Anlyou',
             wedding_date TEXT NOT NULL DEFAULT '2026-09-15',
             start_time TEXT NOT NULL DEFAULT '14:00',
             end_time TEXT NOT NULL DEFAULT '23:00',
@@ -327,7 +327,7 @@ function seedDefaultData(PDO $pdo): void
 {
     $count = (int) $pdo->query('SELECT COUNT(*) FROM settings')->fetchColumn();
     if ($count === 0) {
-        $pdo->exec("INSERT INTO settings (id, bride_name, groom_name) VALUES (1, 'Amira', 'Serge')");
+        $pdo->exec("INSERT INTO settings (id, bride_name, groom_name) VALUES (1, 'Koné Assetou', 'Kone Anlyou')");
     }
 
     $adminCount = (int) $pdo->query('SELECT COUNT(*) FROM admins')->fetchColumn();

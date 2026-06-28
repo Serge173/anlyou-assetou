@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 function defaultCouplePhotoPath(): string
 {
-    return 'assets/images/invitation-card-bg.png';
+    return 'assets/images/carte-invitation-assetou.png';
 }
 
 function defaultStoryGalleryPhotos(): array

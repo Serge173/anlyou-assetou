@@ -2,8 +2,8 @@
 
 CREATE TABLE IF NOT EXISTS settings (
     id INTEGER PRIMARY KEY,
-    bride_name TEXT NOT NULL DEFAULT 'Amira',
-    groom_name TEXT NOT NULL DEFAULT 'Serge',
+    bride_name TEXT NOT NULL DEFAULT 'Koné Assetou',
+    groom_name TEXT NOT NULL DEFAULT 'Kone Anlyou',
     wedding_date TEXT NOT NULL DEFAULT '2026-09-15',
     start_time TEXT NOT NULL DEFAULT '14:00',
     end_time TEXT NOT NULL DEFAULT '23:00',

@@ -202,9 +202,9 @@ ob_start();
                 <p class="text-muted small mb-3">La date et l'heure sont configurées dans la section « Compte à rebours » ci-dessus.</p>
                 <div class="row g-3">
                     <div class="col-md-6"><label class="form-label">Heure de fin</label><input type="time" name="end_time" class="form-control" value="<?= sanitize($settings['end_time'] ?? '') ?>"></div>
-                    <div class="col-12"><label class="form-label">Lieu cérémonie civile</label><input name="civil_venue" class="form-control" value="<?= sanitize($settings['civil_venue'] ?? '') ?>"></div>
-                    <div class="col-12"><label class="form-label">Lieu cérémonie religieuse</label><input name="religious_venue" class="form-control" value="<?= sanitize($settings['religious_venue'] ?? '') ?>"></div>
-                    <div class="col-12"><label class="form-label">Lieu réception</label><input name="reception_venue" class="form-control" value="<?= sanitize($settings['reception_venue'] ?? '') ?>"></div>
+                    <div class="col-12"><label class="form-label">Célébration du mariage</label><textarea name="religious_venue" class="form-control" rows="2"><?= sanitize($settings['religious_venue'] ?? '') ?></textarea></div>
+                    <div class="col-12"><label class="form-label">La réception</label><textarea name="reception_venue" class="form-control" rows="2"><?= sanitize($settings['reception_venue'] ?? '') ?></textarea></div>
+                    <div class="col-12"><label class="form-label">Danse de réjouissance</label><textarea name="civil_venue" class="form-control" rows="2"><?= sanitize($settings['civil_venue'] ?? '') ?></textarea></div>
                     <div class="col-md-6"><label class="form-label">GPS Latitude</label><input type="number" step="any" name="gps_lat" class="form-control" value="<?= sanitize((string)($settings['gps_lat'] ?? '')) ?>"></div>
                     <div class="col-md-6"><label class="form-label">GPS Longitude</label><input type="number" step="any" name="gps_lng" class="form-control" value="<?= sanitize((string)($settings['gps_lng'] ?? '')) ?>"></div>
                 </div>

@@ -231,6 +231,23 @@ function invitationCardImageUrl(array $settings): ?string
     return mediaUrl($path);
 }
 
+function coupleVideoPath(): ?string
+{
+    $path = 'assets/videos/video-assetou.mp4';
+    if (!is_file(publicRoot() . '/' . $path)) {
+        return null;
+    }
+
+    return $path;
+}
+
+function coupleVideoUrl(): ?string
+{
+    $path = coupleVideoPath();
+
+    return $path !== null ? mediaUrl($path) : null;
+}
+
 function handleMediaUpload(array $file, string $prefix = 'media'): ?string
 {
     if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {

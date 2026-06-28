@@ -222,16 +222,16 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
                 </div>
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
                     <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-building"></i></div>
-                        <h3>Cérémonie Civile</h3>
-                        <p class="detail-main"><?= sanitize($settings['civil_venue'] ?? '') ?></p>
+                        <div class="detail-icon"><i class="bi bi-moon-stars"></i></div>
+                        <h3>Célébration du mariage</h3>
+                        <p class="detail-main"><?= nl2br(sanitize($settings['religious_venue'] ?? '')) ?></p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-heart"></i></div>
-                        <h3>Cérémonie Religieuse</h3>
-                        <p class="detail-main"><?= sanitize($settings['religious_venue'] ?? '') ?></p>
+                        <div class="detail-icon"><i class="bi bi-cup-straw"></i></div>
+                        <h3>La réception</h3>
+                        <p class="detail-main"><?= nl2br(sanitize($settings['reception_venue'] ?? '')) ?></p>
                     </div>
                 </div>
             </div>
@@ -239,9 +239,9 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
             <div class="row g-3 mt-1">
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
                     <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-cup-straw"></i></div>
-                        <h3>Réception</h3>
-                        <p class="detail-main"><?= sanitize($settings['reception_venue'] ?? '') ?></p>
+                        <div class="detail-icon"><i class="bi bi-music-note-beamed"></i></div>
+                        <h3>Danse de réjouissance</h3>
+                        <p class="detail-main"><?= nl2br(sanitize($settings['civil_venue'] ?? '')) ?></p>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
@@ -381,6 +381,20 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
             <h2 class="section-title">Galerie des Souvenirs</h2>
             <div class="title-divider"></div>
         </div>
+
+        <?php if ($coupleVideoUrl = coupleVideoUrl()): ?>
+        <div class="couple-video-block mb-5" data-aos="fade-up">
+            <div class="story-album-header text-center mb-4">
+                <h3 class="story-album-title">Notre histoire en vidéo</h3>
+                <p class="story-album-desc">Un aperçu de notre amour, avant le grand jour</p>
+            </div>
+            <div class="couple-video-frame glass-card">
+                <video controls playsinline preload="metadata" class="couple-video-player">
+                    <source src="<?= sanitize($coupleVideoUrl) ?>" type="video/mp4">
+                </video>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <?php if (!empty($galleryPhotos)): ?>
         <div class="photo-carousel photo-carousel--hero mb-5" data-aos="fade-up">
