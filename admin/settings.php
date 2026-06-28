@@ -109,9 +109,9 @@ ob_start();
                 <div class="couple-preview-card">
                     <div class="couple-preview-monogram" id="couplePreviewMonogram"><?= sanitize(coupleInitials($settings)) ?></div>
                     <p class="couple-preview-names" id="couplePreviewNames">
-                        <span id="couplePreviewBride"><?= sanitize($settings['bride_name'] ?? '') ?></span>
-                        <span class="preview-amp">&amp;</span>
                         <span id="couplePreviewGroom"><?= sanitize($settings['groom_name'] ?? '') ?></span>
+                        <span class="preview-amp">&amp;</span>
+                        <span id="couplePreviewBride"><?= sanitize($settings['bride_name'] ?? '') ?></span>
                     </p>
                     <p class="couple-preview-note">Aperçu tel qu'affiché sur le faire-part</p>
                 </div>

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    'name' => 'Koné Assetou & Kone Anlyou',
+    'name' => 'Koné Anlyou & Koné Assetou',
     'url' => getenv('APP_URL') ?: 'http://localhost:8080',
     'debug' => filter_var(getenv('APP_DEBUG') ?: 'false', FILTER_VALIDATE_BOOLEAN),
     'session_name' => 'fairepart_session',

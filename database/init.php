@@ -103,6 +103,16 @@ function runMigrations(PDO $pdo): void
 
     upgradeDefaultMedia($pdo);
     migrateAssetouWeddingDetails($pdo);
+    migrateCoupleNameOrder($pdo);
+}
+
+function migrateCoupleNameOrder(PDO $pdo): void
+{
+    if (!tableExists($pdo, 'settings')) {
+        return;
+    }
+
+    $pdo->exec("UPDATE settings SET groom_name = 'Koné Anlyou' WHERE id = 1 AND groom_name = 'Kone Anlyou'");
 }
 
 function migrateAssetouWeddingDetails(PDO $pdo): void
@@ -196,7 +206,7 @@ function getSchemaStatements(bool $isPgsql): array
             "CREATE TABLE IF NOT EXISTS settings (
                 id SERIAL PRIMARY KEY,
                 bride_name TEXT NOT NULL DEFAULT 'Koné Assetou',
-                groom_name TEXT NOT NULL DEFAULT 'Kone Anlyou',
+                groom_name TEXT NOT NULL DEFAULT 'Koné Anlyou',
                 wedding_date TEXT NOT NULL DEFAULT '2026-09-15',
                 start_time TEXT NOT NULL DEFAULT '14:00',
                 end_time TEXT NOT NULL DEFAULT '23:00',
@@ -303,7 +313,7 @@ Nous vous invitons à célébrer avec nous ce jour unique.',
         "CREATE TABLE IF NOT EXISTS settings (
             id INTEGER PRIMARY KEY,
             bride_name TEXT NOT NULL DEFAULT 'Koné Assetou',
-            groom_name TEXT NOT NULL DEFAULT 'Kone Anlyou',
+            groom_name TEXT NOT NULL DEFAULT 'Koné Anlyou',
             wedding_date TEXT NOT NULL DEFAULT '2026-09-15',
             start_time TEXT NOT NULL DEFAULT '14:00',
             end_time TEXT NOT NULL DEFAULT '23:00',
@@ -412,7 +422,7 @@ function seedDefaultData(PDO $pdo): void
 {
     $count = (int) $pdo->query('SELECT COUNT(*) FROM settings')->fetchColumn();
     if ($count === 0) {
-        $pdo->exec("INSERT INTO settings (id, bride_name, groom_name) VALUES (1, 'Koné Assetou', 'Kone Anlyou')");
+        $pdo->exec("INSERT INTO settings (id, bride_name, groom_name) VALUES (1, 'Koné Assetou', 'Koné Anlyou')");
     }
 
     $adminCount = (int) $pdo->query('SELECT COUNT(*) FROM admins')->fetchColumn();

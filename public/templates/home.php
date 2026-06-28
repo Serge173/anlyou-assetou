@@ -42,8 +42,8 @@
 </button>
 
 <?php
-$brideInitial = coupleInitial($settings['bride_name'] ?? null);
 $groomInitial = coupleInitial($settings['groom_name'] ?? null);
+$brideInitial = coupleInitial($settings['bride_name'] ?? null);
 $invitationCardBg = invitationCardImageUrl($settings);
 $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 ?>
@@ -55,7 +55,7 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
             <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle class="mono-ring" cx="80" cy="80" r="68"/>
             </svg>
-            <span class="mono-letters"><?= sanitize($brideInitial) ?><span class="mono-amp">&amp;</span><?= sanitize($groomInitial) ?></span>
+            <span class="mono-letters"><?= sanitize($groomInitial) ?><span class="mono-amp">&amp;</span><?= sanitize($brideInitial) ?></span>
         </div>
         <p class="cinematic-tagline">Une histoire d'amour, un jour unique, un souvenir éternel...</p>
         <div class="cinematic-music">
@@ -81,15 +81,15 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
         <div class="invite-card" id="inviteCard">
             <div class="invite-cover">
                 <div class="invite-cover-front<?= $invitationCardBg ? ' invite-cover-front--photo' : '' ?>"<?php if ($invitationCardBg): ?> style="background-image: url('<?= sanitize($invitationCardBg) ?>')"<?php endif; ?>>
-                    <span class="invite-cover-monogram"><?= sanitize($brideInitial) ?></span>
-                    <span class="invite-cover-ampersand">&amp;</span>
                     <span class="invite-cover-monogram"><?= sanitize($groomInitial) ?></span>
+                    <span class="invite-cover-ampersand">&amp;</span>
+                    <span class="invite-cover-monogram"><?= sanitize($brideInitial) ?></span>
                     <span class="invite-cover-hint">Toucher pour ouvrir</span>
                 </div>
             </div>
             <div class="invite-inside">
                 <span class="invite-inside-label">Vous êtes notre invité au mariage de&nbsp;:</span>
-                <h2 class="invite-inside-names"><?= sanitize($settings['bride_name'] ?? '') ?><br>&amp; <?= sanitize($settings['groom_name'] ?? '') ?></h2>
+                <h2 class="invite-inside-names"><?= sanitize($settings['groom_name'] ?? '') ?><br>&amp; <?= sanitize($settings['bride_name'] ?? '') ?></h2>
                 <p class="invite-inside-date"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
                 <button type="button" class="btn btn-gold invite-enter-btn" id="inviteEnterBtn">
                     Découvrir l'invitation
@@ -133,9 +133,9 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
     <div class="hero-content text-center" data-aos="fade-up" data-aos-duration="1200">
         <p class="hero-subtitle"><?= sanitize($settings['welcome_title'] ?? 'Bienvenue à notre mariage') ?></p>
         <h1 class="hero-names">
-            <?= sanitize($settings['bride_name'] ?? '') ?>
-            <span class="ampersand">&amp;</span>
             <?= sanitize($settings['groom_name'] ?? '') ?>
+            <span class="ampersand">&amp;</span>
+            <?= sanitize($settings['bride_name'] ?? '') ?>
         </h1>
         <div class="hero-divider"><span>♥</span></div>
         <p class="hero-message"><?= sanitize($settings['welcome_message'] ?? '') ?></p>
@@ -589,7 +589,7 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 <!-- Footer -->
 <footer class="site-footer">
     <div class="container text-center">
-        <p class="footer-names"><?= sanitize($settings['bride_name'] ?? '') ?> &amp; <?= sanitize($settings['groom_name'] ?? '') ?></p>
+        <p class="footer-names"><?= sanitize(coupleLabel($settings)) ?></p>
         <p class="footer-date"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
         <p class="footer-copy">&copy; <?= date('Y') ?> — Avec tout notre amour</p>
     </div>

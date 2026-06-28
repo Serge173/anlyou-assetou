@@ -138,7 +138,7 @@ function coupleLabel(array $settings, string $separator = ' & '): string
         return $bride;
     }
 
-    return $bride . $separator . $groom;
+    return $groom . $separator . $bride;
 }
 
 function coupleInitials(array $settings): string
@@ -150,7 +150,7 @@ function coupleInitials(array $settings): string
         return '';
     }
 
-    return $bride . '&' . $groom;
+    return $groom . '&' . $bride;
 }
 
 function csrfToken(): string

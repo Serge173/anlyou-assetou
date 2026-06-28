@@ -152,13 +152,13 @@ function initCouplePreview() {
         const bride = brideInput.value.trim();
         const groom = groomInput.value.trim();
 
-        previewBride.textContent = bride || '…';
         previewGroom.textContent = groom || '…';
+        previewBride.textContent = bride || '…';
 
-        const brideInitial = initialFromName(bride);
         const groomInitial = initialFromName(groom);
-        previewMonogram.textContent = brideInitial || groomInitial
-            ? `${brideInitial}&${groomInitial}`
+        const brideInitial = initialFromName(bride);
+        previewMonogram.textContent = groomInitial || brideInitial
+            ? `${groomInitial}&${brideInitial}`
             : '…';
     };
 
