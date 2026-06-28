@@ -94,6 +94,12 @@ function getDatabase(bool $reset = false): PDO
         return $pdo;
     }
 
+    if (isServerless()) {
+        throw new RuntimeException(
+            'Configure DATABASE_URL (Neon PostgreSQL) in Vercel → Settings → Environment Variables, then redeploy.'
+        );
+    }
+
     if ($driver === 'pgsql') {
         $host = getenv('DB_HOST') ?: 'localhost';
         $port = getenv('DB_PORT') ?: '5432';
@@ -107,10 +113,6 @@ function getDatabase(bool $reset = false): PDO
             PDO::ATTR_EMULATE_PREPARES => true,
         ]);
         return $pdo;
-    }
-
-    if (isServerless()) {
-        throw new RuntimeException('Configure DATABASE_URL or POSTGRES_URL for production.');
     }
 
     $dbPath = __DIR__ . '/../database/fairepart.sqlite';
