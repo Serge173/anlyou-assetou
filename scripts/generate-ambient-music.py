@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Génère une musique piano ambiante originale (libre de droits) pour l'intro du faire-part.
+Génère une musique piano romantique de mariage (libre de droits) pour le faire-part.
 Sortie : public/assets/audio/ambient.mp3
 """
 from __future__ import annotations
@@ -17,32 +17,30 @@ except ImportError as exc:
     raise SystemExit("Installez lameenc : pip install lameenc numpy") from exc
 
 SAMPLE_RATE = 44100
-DURATION = 48.0  # boucle fluide
+DURATION = 56.0
 OUTPUT = Path(__file__).resolve().parent.parent / "public" / "assets" / "audio" / "ambient.mp3"
 
-# Notes MIDI -> fréquence
+
 def midi_to_hz(note: float) -> float:
     return 440.0 * (2.0 ** ((note - 69) / 12.0))
 
 
 def piano_tone(freq: float, duration: float, velocity: float = 0.35) -> np.ndarray:
-    """Synthèse additive type piano avec décroissance par harmonique."""
     n = int(duration * SAMPLE_RATE)
     if n <= 0:
         return np.array([], dtype=np.float64)
     t = np.arange(n, dtype=np.float64) / SAMPLE_RATE
     tone = np.zeros(n, dtype=np.float64)
     partials = (
-        (1.0, 1.00, 2.2),
-        (2.0, 0.45, 3.8),
-        (3.0, 0.22, 5.5),
-        (4.0, 0.12, 7.0),
-        (5.0, 0.06, 9.0),
-        (6.0, 0.03, 11.0),
+        (1.0, 1.00, 2.0),
+        (2.0, 0.42, 3.5),
+        (3.0, 0.20, 5.0),
+        (4.0, 0.10, 6.5),
+        (5.0, 0.05, 8.5),
     )
     for harmonic, amp, decay in partials:
         tone += amp * np.sin(2 * math.pi * freq * harmonic * t) * np.exp(-decay * t)
-    attack = min(int(0.012 * SAMPLE_RATE), n)
+    attack = min(int(0.018 * SAMPLE_RATE), n)
     env = np.ones(n)
     if attack:
         env[:attack] = np.linspace(0.0, 1.0, attack)
@@ -60,15 +58,16 @@ def mix_at(buffer: np.ndarray, offset: int, clip: np.ndarray) -> None:
     buffer[offset:end] += clip
 
 
-def soft_reverb(signal: np.ndarray, delay_ms: float = 38.0, mix: float = 0.18) -> np.ndarray:
+def soft_reverb(signal: np.ndarray, delay_ms: float = 45.0, mix: float = 0.22) -> np.ndarray:
     delay = int(SAMPLE_RATE * delay_ms / 1000.0)
     wet = np.zeros_like(signal)
-    wet[delay:] = signal[:-delay] * 0.55
-    wet[delay * 2 :] += signal[: -delay * 2] * 0.28
+    wet[delay:] = signal[:-delay] * 0.58
+    wet[delay * 2 :] += signal[: -delay * 2] * 0.30
+    wet[delay * 3 :] += signal[: -delay * 3] * 0.14
     return signal * (1 - mix) + wet * mix
 
 
-def fade_edges(signal: np.ndarray, fade_s: float = 2.5) -> np.ndarray:
+def fade_edges(signal: np.ndarray, fade_s: float = 3.0) -> np.ndarray:
     n = len(signal)
     fade = int(fade_s * SAMPLE_RATE)
     fade = min(fade, n // 4)
@@ -83,50 +82,44 @@ def build_track() -> np.ndarray:
     total = int(DURATION * SAMPLE_RATE)
     track = np.zeros(total, dtype=np.float64)
 
-    # Progression romantique : Am7 — F — C — G (arpèges doux)
+    # Valse de mariage en 3/4 : C — Am — F — G
     chords = [
-        [57, 60, 64, 67],   # A3 C4 E4 G4
-        [53, 57, 60, 65],   # F3 A3 C4 F4
-        [48, 52, 55, 60],   # C3 E3 G3 C4
-        [55, 59, 62, 67],   # G3 B3 D4 G4
+        [48, 52, 55, 60],
+        [45, 52, 57, 60],
+        [41, 48, 53, 57],
+        [43, 47, 50, 55],
     ]
-    beat = 1.85  # secondes par mesure
-    arp_notes_per_chord = 8
+    measure = 2.4
+    waltz_pattern = [0, 1, 2, 1]
 
-    for bar, chord in enumerate(chords * 3):  # 12 mesures
-        bar_start = int(bar * beat * SAMPLE_RATE)
-        step = beat / arp_notes_per_chord
-        for i, midi in enumerate(
-            [chord[i % len(chord)] for i in range(arp_notes_per_chord)]
-        ):
-            start = bar_start + int(i * step * SAMPLE_RATE)
-            freq = midi_to_hz(midi)
-            vel = 0.22 if midi < 55 else 0.18
-            note_len = step * 1.35
-            clip = piano_tone(freq, note_len, vel)
+    for bar, chord in enumerate(chords * 4):
+        bar_start = int(bar * measure * SAMPLE_RATE)
+        beat = measure / 3
+        for beat_idx, note_idx in enumerate(waltz_pattern):
+            start = bar_start + int(beat_idx * beat * SAMPLE_RATE)
+            midi = chord[note_idx % len(chord)]
+            vel = 0.26 if beat_idx == 0 else 0.16
+            note_len = beat * (1.15 if beat_idx == 0 else 0.85)
+            clip = piano_tone(midi_to_hz(midi), note_len, vel)
             mix_at(track, start, clip)
 
-    # Accords tenus très légers en fond
-    for bar, chord in enumerate(chords * 3):
-        bar_start = int(bar * beat * SAMPLE_RATE)
         for midi in chord[:3]:
             freq = midi_to_hz(midi - 12)
-            clip = piano_tone(freq, beat * 0.95, 0.06)
+            clip = piano_tone(freq, measure * 0.92, 0.05)
             mix_at(track, bar_start, clip)
 
-    # Mélodie simple au-dessus (do — mi — sol — la)
-    melody = [72, 74, 76, 74, 72, 71, 72, 74]
-    mel_step = beat / 2
-    for i, midi in enumerate(melody * 6):
+    melody = [72, 76, 79, 76, 74, 72, 71, 72, 74, 76, 79, 81, 79, 76, 74, 72]
+    mel_step = measure / 2
+    for i, midi in enumerate(melody * 3):
         start = int(i * mel_step * SAMPLE_RATE)
-        clip = piano_tone(midi_to_hz(midi), mel_step * 1.1, 0.14)
+        clip = piano_tone(midi_to_hz(midi), mel_step * 0.95, 0.13)
         mix_at(track, start, clip)
 
     track = soft_reverb(track)
     track = fade_edges(track)
 
     peak = np.max(np.abs(track)) or 1.0
-    track = track / peak * 0.82
+    track = track / peak * 0.80
     return track
 
 
@@ -144,7 +137,7 @@ def to_mp3(pcm: np.ndarray, path: Path) -> None:
 
 
 def main() -> None:
-    print("Génération de la musique piano ambiante…")
+    print("Génération de la musique piano de mariage…")
     pcm = build_track()
     to_mp3(pcm, OUTPUT)
     size_kb = OUTPUT.stat().st_size / 1024

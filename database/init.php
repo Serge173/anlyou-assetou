@@ -81,6 +81,18 @@ function runMigrations(PDO $pdo): void
         }
     }
 
+    if (tableExists($pdo, 'settings') && !columnExists($pdo, 'settings', 'ambient_music_preset')) {
+        if ($isPgsql) {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN ambient_music_preset TEXT DEFAULT 'ambient'");
+        } else {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN ambient_music_preset TEXT DEFAULT 'ambient'");
+        }
+    }
+
+    if (tableExists($pdo, 'settings') && columnExists($pdo, 'settings', 'ambient_music_preset')) {
+        $pdo->exec("UPDATE settings SET ambient_music_preset = 'wedding-mountain' WHERE ambient_music_preset = '003'");
+    }
+
     if (tableExists($pdo, 'settings') && !columnExists($pdo, 'settings', 'invitation_share_message')) {
         if ($isPgsql) {
             $pdo->exec('ALTER TABLE settings ADD COLUMN invitation_share_message TEXT DEFAULT NULL');

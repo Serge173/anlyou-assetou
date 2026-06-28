@@ -201,20 +201,21 @@ body {
 }
 
 .login-header .brand-logo {
-    height: 130px;
+    height: 150px;
     width: auto;
     max-width: 100%;
     display: block;
     margin: 0 auto 1rem;
     object-fit: contain;
+    border-radius: 10px;
 }
 
 .sidebar-brand-logo {
-    height: 52px;
+    height: 72px;
     width: auto;
     max-width: 100%;
     object-fit: contain;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .brand-logo {

@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion — Invitationdebaby</title>
+    <title>Connexion — <?= sanitize(brandName()) ?></title>
     <link rel="icon" type="image/png" href="<?= sanitize(brandLogoUrl()) ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="login-page">
     <div class="login-card">
         <div class="login-header">
-            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="Invitationdebaby" class="brand-logo">
+            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="<?= sanitize(brandName()) ?>" class="brand-logo">
             <p>Connectez-vous pour gérer votre invitation</p>
         </div>
 

@@ -50,16 +50,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (!empty($_POST['remove_ambient_music'])) {
-        $data['ambient_music'] = '';
-    } else {
-        $musicPath = resolveMediaPath(
-            handleAudioUpload($_FILES['ambient_music_file'] ?? []),
-            $_POST['ambient_music_url'] ?? ''
-        );
-        if ($musicPath) {
-            $data['ambient_music'] = $musicPath;
+    $allowedPresets = array_merge(array_keys(ambientMusicPresets()), ['custom']);
+    $musicPreset = $_POST['ambient_music_preset'] ?? 'ambient';
+    if (!in_array($musicPreset, $allowedPresets, true)) {
+        $musicPreset = 'ambient';
+    }
+    $data['ambient_music_preset'] = $musicPreset;
+
+    if ($musicPreset === 'custom') {
+        if (!empty($_POST['remove_ambient_music'])) {
+            $data['ambient_music'] = '';
+            $data['ambient_music_preset'] = 'ambient';
+        } else {
+            $musicPath = resolveMediaPath(
+                handleAudioUpload($_FILES['ambient_music_file'] ?? []),
+                $_POST['ambient_music_url'] ?? ''
+            );
+            if ($musicPath) {
+                $data['ambient_music'] = $musicPath;
+            }
         }
+    } elseif (!empty($_POST['remove_ambient_music'])) {
+        $data['ambient_music'] = '';
+        $data['ambient_music_preset'] = 'ambient';
+    } else {
+        $data['ambient_music'] = '';
     }
 
     updateSettings($pdo, $data);
@@ -191,33 +206,49 @@ ob_start();
 
     <div class="admin-card mb-4">
         <h3><i class="bi bi-music-note-beamed me-2"></i>Musique d'ambiance</h3>
-        <p class="text-muted mb-4">Musique de fond du faire-part (intro cinématique et bouton « Activer la musique »). Formats acceptés : MP3, OGG, WAV, M4A. Sur Vercel, collez une URL directe vers le fichier audio.</p>
+        <p class="text-muted mb-4">Musique de fond du faire-part (intro cinématique et bouton « Activer la musique »). Elle tourne en boucle pendant la visite.</p>
+        <?php $currentMusicPreset = ambientMusicPreset($settings); ?>
         <div class="row g-4 align-items-start">
             <div class="col-lg-7">
-                <?php if (!isServerless()): ?>
-                <div class="mb-3">
-                    <label class="form-label">Fichier audio</label>
-                    <input type="file" name="ambient_music_file" class="form-control" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/mp4,audio/x-m4a,.mp3,.ogg,.wav,.m4a">
+                <div class="mb-4">
+                    <label class="form-label d-block">Choisir une musique</label>
+                    <?php foreach (ambientMusicPresets() as $presetKey => $presetMeta): ?>
+                    <div class="form-check mb-2">
+                        <input type="radio" name="ambient_music_preset" class="form-check-input js-music-preset" id="musicPreset<?= sanitize($presetKey) ?>" value="<?= sanitize($presetKey) ?>" data-preview-url="<?= sanitize(mediaUrl($presetMeta['path'])) ?>" data-preview-mime="<?= sanitize(ambientMusicMime($presetMeta['path'])) ?>" <?= $currentMusicPreset === $presetKey ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="musicPreset<?= sanitize($presetKey) ?>"><?= sanitize($presetMeta['label']) ?></label>
+                    </div>
+                    <?php endforeach; ?>
+                    <div class="form-check mb-2">
+                        <input type="radio" name="ambient_music_preset" class="form-check-input js-music-preset" id="musicPresetCustom" value="custom" data-preview-url="<?= sanitize(ambientMusicUrl($settings)) ?>" data-preview-mime="<?= sanitize(ambientMusicMime(ambientMusicPath($settings))) ?>" <?= $currentMusicPreset === 'custom' ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="musicPresetCustom">Fichier personnalisé</label>
+                    </div>
                 </div>
-                <?php endif; ?>
-                <div class="mb-3">
-                    <label class="form-label">URL du fichier audio</label>
-                    <input type="url" name="ambient_music_url" class="form-control" placeholder="https://.../musique.mp3" value="<?= str_starts_with($settings['ambient_music'] ?? '', 'http') ? sanitize($settings['ambient_music']) : '' ?>">
+                <div id="customMusicFields" class="<?= $currentMusicPreset === 'custom' ? '' : 'd-none' ?>">
+                    <?php if (!isServerless()): ?>
+                    <div class="mb-3">
+                        <label class="form-label">Fichier audio</label>
+                        <input type="file" name="ambient_music_file" class="form-control" accept="audio/mpeg,audio/mp3,audio/ogg,audio/wav,audio/mp4,audio/x-m4a,.mp3,.ogg,.wav,.m4a">
+                    </div>
+                    <?php endif; ?>
+                    <div class="mb-3">
+                        <label class="form-label">URL du fichier audio</label>
+                        <input type="url" name="ambient_music_url" class="form-control" placeholder="https://.../musique.mp3" value="<?= $currentMusicPreset === 'custom' && str_starts_with($settings['ambient_music'] ?? '', 'http') ? sanitize($settings['ambient_music']) : '' ?>">
+                    </div>
+                    <?php if ($currentMusicPreset === 'custom' && !empty($settings['ambient_music'])): ?>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="remove_ambient_music" class="form-check-input" id="removeAmbientMusic" value="1">
+                        <label class="form-check-label text-danger" for="removeAmbientMusic">Revenir à la musique par défaut</label>
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php if (!empty($settings['ambient_music'])): ?>
-                <div class="form-check mb-3">
-                    <input type="checkbox" name="remove_ambient_music" class="form-check-input" id="removeAmbientMusic" value="1">
-                    <label class="form-check-label text-danger" for="removeAmbientMusic">Revenir à la musique par défaut</label>
-                </div>
-                <?php endif; ?>
             </div>
             <div class="col-lg-5">
                 <div class="invite-card-preview p-3">
                     <p class="small text-muted mb-2">Aperçu</p>
-                    <audio controls preload="metadata" style="width:100%">
+                    <audio id="ambientMusicPreview" controls preload="metadata" style="width:100%">
                         <source src="<?= sanitize(ambientMusicUrl($settings)) ?>" type="<?= sanitize(ambientMusicMime(ambientMusicPath($settings))) ?>">
                     </audio>
-                    <p class="small text-muted mt-2 mb-0">Actuelle : <?= sanitize(basename(ambientMusicPath($settings))) ?></p>
+                    <p class="small text-muted mt-2 mb-0">Actuelle : <?= sanitize(ambientMusicLabel($settings)) ?></p>
                 </div>
             </div>
         </div>

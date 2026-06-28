@@ -1,4 +1,8 @@
-Musique : ambient.mp3
-Auteur : générée pour ce faire-part (composition originale)
-Licence : libre de droits — usage personnel et commercial autorisé sans attribution obligatoire.
-Source : scripts/generate-ambient-music.py (regénérable à tout moment)
+Musiques intégrées :
+
+- ambient.mp3 — piano romantique de mariage (composition originale)
+  Source : scripts/generate-ambient-music.py (regénérable à tout moment)
+  Licence : libre de droits — usage personnel et commercial autorisé sans attribution obligatoire.
+
+- wedding-mountain.mp3 — mélodie festive de mariage
+  Source : fichier fourni pour le faire-part (the_mountain-wedding)

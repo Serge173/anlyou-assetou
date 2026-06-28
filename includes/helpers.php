@@ -237,6 +237,11 @@ function assetUrl(string $relativePath): string
     return mediaUrl($relativePath);
 }
 
+function brandName(): string
+{
+    return 'Invitation de Baby';
+}
+
 function brandLogoUrl(): string
 {
     return mediaUrl('assets/images/logo-invitationdebaby.png');
@@ -324,19 +329,69 @@ function coupleVideoUrl(): ?string
     return $path !== null ? mediaUrl($path) : null;
 }
 
+function ambientMusicPresets(): array
+{
+    return [
+        'ambient' => [
+            'path' => 'assets/audio/ambient.mp3',
+            'label' => 'Piano romantique (mariage)',
+        ],
+        'wedding-mountain' => [
+            'path' => 'assets/audio/wedding-mountain.mp3',
+            'label' => 'Mélodie festive de mariage',
+        ],
+    ];
+}
+
 function defaultAmbientMusicPath(): string
 {
-    return 'assets/audio/ambient.mp3';
+    return ambientMusicPresets()['ambient']['path'];
+}
+
+function ambientMusicPreset(array $settings): string
+{
+    $preset = trim($settings['ambient_music_preset'] ?? '');
+    if ($preset === '003') {
+        $preset = 'wedding-mountain';
+    }
+    if ($preset !== '' && isset(ambientMusicPresets()[$preset])) {
+        return $preset;
+    }
+
+    $path = trim($settings['ambient_music'] ?? '');
+    if ($path !== '') {
+        foreach (ambientMusicPresets() as $key => $meta) {
+            if ($path === $meta['path']) {
+                return $key;
+            }
+        }
+
+        return 'custom';
+    }
+
+    return 'ambient';
 }
 
 function ambientMusicPath(array $settings): string
 {
-    $path = trim($settings['ambient_music'] ?? '');
-    if ($path !== '') {
-        return $path;
+    $preset = ambientMusicPreset($settings);
+    if ($preset === 'custom') {
+        $path = trim($settings['ambient_music'] ?? '');
+
+        return $path !== '' ? $path : defaultAmbientMusicPath();
     }
 
-    return defaultAmbientMusicPath();
+    return ambientMusicPresets()[$preset]['path'];
+}
+
+function ambientMusicLabel(array $settings): string
+{
+    $preset = ambientMusicPreset($settings);
+    if ($preset === 'custom') {
+        return basename(ambientMusicPath($settings));
+    }
+
+    return ambientMusicPresets()[$preset]['label'];
 }
 
 function ambientMusicUrl(array $settings): string

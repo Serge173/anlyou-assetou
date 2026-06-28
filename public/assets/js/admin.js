@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCouplePreview();
     initCountdownPreview();
     initInvitationShare();
+    initMusicPresetPreview();
 });
 
 async function copyToClipboard(text) {
@@ -175,4 +176,37 @@ function initCountdownPreview() {
 
     updateCountdownPreview();
     window.setInterval(updateCountdownPreview, 1000);
+}
+
+function initMusicPresetPreview() {
+    const presetInputs = document.querySelectorAll('.js-music-preset');
+    const customFields = document.getElementById('customMusicFields');
+    const preview = document.getElementById('ambientMusicPreview');
+    if (!presetInputs.length || !preview) {
+        return;
+    }
+
+    const updatePreview = (input) => {
+        const source = preview.querySelector('source');
+        if (!source || !input.dataset.previewUrl) {
+            return;
+        }
+        preview.pause();
+        source.src = input.dataset.previewUrl;
+        source.type = input.dataset.previewMime || 'audio/mpeg';
+        preview.load();
+    };
+
+    presetInputs.forEach((input) => {
+        input.addEventListener('change', () => {
+            if (input.value === 'custom') {
+                customFields?.classList.remove('d-none');
+            } else {
+                customFields?.classList.add('d-none');
+            }
+            if (input.checked) {
+                updatePreview(input);
+            }
+        });
+    });
 }
