@@ -32,7 +32,11 @@ function adminLayout(string $title, string $content, string $activePage = ''): v
 </head>
 <body>
 <div class="admin-wrapper">
-    <aside class="admin-sidebar">
+    <div class="admin-sidebar-backdrop" id="adminSidebarBackdrop" aria-hidden="true"></div>
+    <aside class="admin-sidebar" id="adminSidebar">
+        <button type="button" class="admin-sidebar-close" id="adminSidebarClose" aria-label="Fermer le menu">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
         <div class="sidebar-brand">
             <img src="<?= sanitize(brandLogoUrl()) ?>" alt="<?= sanitize(brandName()) ?>" class="sidebar-brand-logo">
             <span class="sidebar-brand-title">
@@ -61,7 +65,13 @@ function adminLayout(string $title, string $content, string $activePage = ''): v
     </aside>
     <main class="admin-main">
         <header class="admin-header">
-            <h1><?= sanitize($title) ?></h1>
+            <div class="admin-header-start">
+                <button type="button" class="admin-menu-toggle" id="adminMenuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="adminSidebar">
+                    <i class="bi bi-list admin-menu-icon-open" aria-hidden="true"></i>
+                    <i class="bi bi-x-lg admin-menu-icon-close" aria-hidden="true"></i>
+                </button>
+                <h1><?= sanitize($title) ?></h1>
+            </div>
             <span class="admin-user"><i class="bi bi-person-circle"></i> <?= sanitize($_SESSION['admin_username'] ?? 'Admin') ?></span>
         </header>
         <div class="admin-content">

@@ -25,7 +25,7 @@ body {
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: 100;
+    z-index: 1050;
 }
 
 .sidebar-brand {
@@ -95,13 +95,98 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 90;
+}
+
+.admin-header-start {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+}
+
+.admin-menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(10, 22, 40, 0.12);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--admin-sidebar);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.admin-menu-toggle:hover {
+    background: #f7f9fc;
+    border-color: rgba(201, 162, 39, 0.45);
+    color: var(--admin-accent);
+}
+
+.admin-menu-toggle .admin-menu-icon-close {
+    display: none;
+}
+
+.admin-menu-toggle.is-active .admin-menu-icon-open {
+    display: none;
+}
+
+.admin-menu-toggle.is-active .admin-menu-icon-close {
+    display: block;
+}
+
+.admin-menu-toggle .admin-menu-icon-open,
+.admin-menu-toggle .admin-menu-icon-close {
+    font-size: 1.45rem;
+    line-height: 1;
+}
+
+.admin-sidebar-backdrop {
+    display: none;
+}
+
+.admin-sidebar-close {
+    display: none;
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    z-index: 2;
+}
+
+.admin-sidebar-close:hover {
+    background: rgba(201, 162, 39, 0.22);
+    color: var(--admin-accent);
+}
+
+.admin-sidebar-close i {
+    font-size: 1.25rem;
+    line-height: 1;
 }
 
 .admin-header h1 {
     font-size: 1.4rem;
     margin: 0;
     font-weight: 600;
+    min-width: 0;
 }
 
 .admin-user {
@@ -436,8 +521,113 @@ body {
     margin-top: 0.5rem;
 }
 
-@media (max-width: 768px) {
-    .admin-sidebar { width: 100%; position: relative; }
-    .admin-main { margin-left: 0; }
-    .admin-wrapper { flex-direction: column; }
+@media (max-width: 991.98px) {
+    .admin-menu-toggle {
+        display: inline-flex;
+    }
+
+    .admin-sidebar-close {
+        display: inline-flex;
+    }
+
+    .sidebar-brand {
+        padding-right: 3.25rem;
+    }
+
+    .admin-sidebar {
+        width: min(300px, 88vw);
+        transform: translateX(-105%);
+        transition: transform 0.28s ease;
+        box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
+    }
+
+    .admin-sidebar.is-open {
+        transform: translateX(0);
+    }
+
+    .admin-sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 22, 40, 0.55);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.28s ease, visibility 0.28s ease;
+        z-index: 1040;
+    }
+
+    .admin-sidebar-backdrop.is-visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    body.admin-nav-open {
+        overflow: hidden;
+    }
+
+    .admin-main {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .admin-header {
+        padding: 0.85rem 1rem;
+    }
+
+    .admin-header h1 {
+        font-size: 1.1rem;
+        line-height: 1.25;
+    }
+
+    .admin-user {
+        font-size: 0.78rem;
+        max-width: 42vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .admin-content {
+        padding: 1rem;
+    }
+
+    .admin-card {
+        padding: 1rem;
+    }
+
+    .couple-dashboard-banner {
+        padding: 1rem;
+    }
+
+    .couple-dashboard-banner h2 {
+        font-size: 1.2rem;
+    }
+
+    .invite-share-actions {
+        flex-direction: column;
+    }
+
+    .invite-share-actions .btn {
+        width: 100%;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .login-card {
+        margin: 1rem;
+        padding: 1.75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .admin-user span,
+    .admin-user {
+        display: none;
+    }
+
+    .admin-header-start {
+        gap: 0.65rem;
+    }
 }

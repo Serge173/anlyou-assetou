@@ -3,11 +3,69 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => el.remove(), 4000);
     });
 
+    initAdminSidebar();
     initCouplePreview();
     initCountdownPreview();
     initInvitationShare();
     initMusicPresetPreview();
 });
+
+function initAdminSidebar() {
+    const toggle = document.getElementById('adminMenuToggle');
+    const sidebar = document.getElementById('adminSidebar');
+    const backdrop = document.getElementById('adminSidebarBackdrop');
+    const closeBtn = document.getElementById('adminSidebarClose');
+    if (!toggle || !sidebar) {
+        return;
+    }
+
+    const openMenu = () => {
+        sidebar.classList.add('is-open');
+        backdrop?.classList.add('is-visible');
+        document.body.classList.add('admin-nav-open');
+        toggle.classList.add('is-active');
+        toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', 'Fermer le menu');
+        backdrop?.setAttribute('aria-hidden', 'false');
+    };
+
+    const closeMenu = () => {
+        sidebar.classList.remove('is-open');
+        backdrop?.classList.remove('is-visible');
+        document.body.classList.remove('admin-nav-open');
+        toggle.classList.remove('is-active');
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.setAttribute('aria-label', 'Ouvrir le menu');
+        backdrop?.setAttribute('aria-hidden', 'true');
+    };
+
+    toggle.addEventListener('click', () => {
+        if (sidebar.classList.contains('is-open')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
+
+    closeBtn?.addEventListener('click', closeMenu);
+    backdrop?.addEventListener('click', closeMenu);
+
+    sidebar.querySelectorAll('.sidebar-link').forEach((link) => {
+        link.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeMenu();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 992) {
+            closeMenu();
+        }
+    });
+}
 
 async function copyToClipboard(text) {
     if (navigator.clipboard?.writeText) {
