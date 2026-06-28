@@ -76,6 +76,7 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 
 <!-- 2. Carte d'invitation 3D -->
 <div id="invitationOverlay">
+    <canvas id="fireworksCanvas" class="fireworks-canvas" aria-hidden="true"></canvas>
     <div class="invite-scene">
         <div class="invite-card" id="inviteCard">
             <div class="invite-cover">

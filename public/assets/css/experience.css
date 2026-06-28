@@ -324,6 +324,44 @@ body:not(.intro-active) .site-music-toggle.is-playing {
     pointer-events: none;
 }
 
+#invitationOverlay.is-fireworks .invite-scene {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+    pointer-events: none;
+}
+
+.fireworks-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10001;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+#invitationOverlay.is-fireworks .fireworks-canvas {
+    opacity: 1;
+}
+
+.fireworks-flash {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.35) 0%, transparent 65%);
+    opacity: 0;
+    animation: fireworksFlash 0.6s ease-out forwards;
+}
+
+@keyframes fireworksFlash {
+    0% { opacity: 0; }
+    15% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 .invite-scene {
     width: min(340px, 90vw);
     height: min(480px, 70vh);
