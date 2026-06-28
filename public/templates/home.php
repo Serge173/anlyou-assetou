@@ -256,7 +256,7 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
                         <div class="detail-icon"><i class="bi bi-map"></i></div>
                         <h3>Itinéraire</h3>
                         <p class="detail-main">Trouvez le chemin jusqu'au lieu</p>
-                        <a href="https://maps.google.com/?q=<?= urlencode(($settings['gps_lat'] ?? '') . ',' . ($settings['gps_lng'] ?? '')) ?>" target="_blank" class="btn btn-outline-gold btn-sm detail-map-btn">
+                        <a href="<?= sanitize(mapDirectionsUrl($settings)) ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm detail-map-btn">
                             Google Maps
                         </a>
                     </div>
@@ -266,9 +266,10 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 
         <div class="map-container mt-4" data-aos="fade-up">
             <iframe
-                src="https://maps.google.com/maps?q=<?= urlencode(($settings['gps_lat'] ?? '48.8566') . ',' . ($settings['gps_lng'] ?? '2.3522')) ?>&amp;z=15&amp;output=embed"
+                src="<?= sanitize(mapEmbedUrl($settings)) ?>"
                 width="100%" height="280" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Carte du lieu du mariage">
             </iframe>
         </div>
     </div>

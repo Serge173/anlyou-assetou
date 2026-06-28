@@ -99,6 +99,7 @@ function contentSecurityPolicy(): string
         "img-src 'self' data: blob: https:",
         "media-src 'self' blob: https:",
         "connect-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com",
+        "frame-src 'self' https://maps.google.com https://www.google.com https://www.openstreetmap.org",
         "worker-src 'self' blob:",
         "manifest-src 'self'",
         "upgrade-insecure-requests",

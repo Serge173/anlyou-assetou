@@ -221,6 +221,33 @@ function isCountdownEnabled(array $settings): bool
     return (bool) ($settings['countdown_enabled'] ?? true);
 }
 
+function mapCoordinates(array $settings): array
+{
+    return [
+        'lat' => (float) ($settings['gps_lat'] ?? 5.3561),
+        'lng' => (float) ($settings['gps_lng'] ?? -4.0127),
+    ];
+}
+
+function mapEmbedUrl(array $settings, float $delta = 0.015): string
+{
+    $coords = mapCoordinates($settings);
+    $lat = $coords['lat'];
+    $lng = $coords['lng'];
+    $bbox = implode(',', [$lng - $delta, $lat - $delta, $lng + $delta, $lat + $delta]);
+
+    return 'https://www.openstreetmap.org/export/embed.html?bbox=' . rawurlencode($bbox)
+        . '&layer=mapnik&marker=' . rawurlencode("{$lat},{$lng}");
+}
+
+function mapDirectionsUrl(array $settings): string
+{
+    $coords = mapCoordinates($settings);
+
+    return 'https://www.google.com/maps/search/?api=1&query='
+        . rawurlencode($coords['lat'] . ',' . $coords['lng']);
+}
+
 function invitationCardImageUrl(array $settings): ?string
 {
     $path = trim($settings['invitation_card_image'] ?? '');
