@@ -73,6 +73,14 @@ function runMigrations(PDO $pdo): void
         $pdo->exec("UPDATE settings SET invitation_card_image = 'assets/images/invitation-card-bg.png' WHERE id = 1 AND (invitation_card_image IS NULL OR invitation_card_image = '')");
     }
 
+    if (tableExists($pdo, 'settings') && !columnExists($pdo, 'settings', 'ambient_music')) {
+        if ($isPgsql) {
+            $pdo->exec('ALTER TABLE settings ADD COLUMN ambient_music TEXT DEFAULT NULL');
+        } else {
+            $pdo->exec('ALTER TABLE settings ADD COLUMN ambient_music TEXT DEFAULT NULL');
+        }
+    }
+
     upgradeDefaultMedia($pdo);
     migrateAssetouWeddingDetails($pdo);
 }

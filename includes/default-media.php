@@ -7,32 +7,37 @@ function defaultCouplePhotoPath(): string
     return 'assets/images/carte-invitation-assetou.png';
 }
 
+function defaultInvitationCoverPath(): string
+{
+    return 'assets/images/couple-couverture.png';
+}
+
 function defaultStoryGalleryPhotos(): array
 {
     return [
         1 => [
             'title' => 'Notre premier regard',
-            'path' => 'assets/images/gallery/story-1.jpg',
+            'path' => 'assets/images/gallery/assetou-1.png',
         ],
         2 => [
             'title' => 'La demande',
-            'path' => 'assets/images/gallery/story-2.jpg',
+            'path' => 'assets/images/gallery/assetou-2.png',
         ],
         3 => [
             'title' => 'Aventure à deux',
-            'path' => 'assets/images/gallery/story-3.jpg',
+            'path' => 'assets/images/gallery/assetou-3.png',
         ],
         4 => [
             'title' => 'Anniversaire surprise',
-            'path' => 'assets/images/gallery/story-4.jpg',
+            'path' => 'assets/images/gallery/assetou-4.png',
         ],
         5 => [
             'title' => 'Ensemble pour toujours',
-            'path' => 'assets/images/gallery/story-5.jpg',
+            'path' => 'assets/images/gallery/assetou-5.png',
         ],
         6 => [
             'title' => 'Portrait du couple',
-            'path' => 'assets/images/gallery/story-6.jpg',
+            'path' => 'assets/images/gallery/assetou-5.png',
         ],
     ];
 }
@@ -68,6 +73,7 @@ function upgradeDefaultMedia(PDO $pdo): void
     }
 
     $couplePhoto = defaultCouplePhotoPath();
+    $coverPhoto = defaultInvitationCoverPath();
 
     $syncHero = $pdo->prepare(
         'UPDATE settings SET hero_image = invitation_card_image
@@ -85,29 +91,12 @@ function upgradeDefaultMedia(PDO $pdo): void
     $stmt = $pdo->prepare(
         'UPDATE settings SET invitation_card_image = ? WHERE id = 1 AND (
             invitation_card_image IS NULL OR invitation_card_image = \'\'
+            OR invitation_card_image LIKE ? OR invitation_card_image = ?
         )'
     );
-    $stmt->execute([$couplePhoto]);
+    $stmt->execute([$coverPhoto, '%invitation-card-bg%', $couplePhoto]);
 
-    if (!tableExists($pdo, 'gallery_photos')) {
-        return;
-    }
-
-    $updateStoryPhoto = $pdo->prepare(
-        'UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ? AND file_path LIKE ?'
-    );
-    foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
-        $updateStoryPhoto->execute([$photo['path'], $photo['title'], $albumId, '%.svg']);
-    }
-
-    $repairStoryPhoto = $pdo->prepare(
-        'UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ? AND file_path LIKE ?'
-    );
-    foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
-        foreach (brokenStoryGalleryUnsplashIds() as $brokenId) {
-            $repairStoryPhoto->execute([$photo['path'], $photo['title'], $albumId, '%' . $brokenId . '%']);
-        }
-    }
+    upgradeAssetouGalleryPhotos($pdo);
 
     if (!tableExists($pdo, 'wedding_album') || !tableExists($pdo, 'wedding_sections')) {
         return;
@@ -145,5 +134,27 @@ function upgradeDefaultMedia(PDO $pdo): void
             $sort++,
             $allowDownload,
         ]);
+    }
+}
+
+function upgradeAssetouGalleryPhotos(PDO $pdo): void
+{
+    if (!tableExists($pdo, 'gallery_photos')) {
+        return;
+    }
+
+    $needsUpgrade = (int) $pdo->query(
+        "SELECT COUNT(*) FROM gallery_photos WHERE file_path NOT LIKE '%assetou-%'"
+    )->fetchColumn();
+
+    if ($needsUpgrade === 0) {
+        return;
+    }
+
+    $updateStoryPhoto = $pdo->prepare(
+        'UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ?'
+    );
+    foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
+        $updateStoryPhoto->execute([$photo['path'], $photo['title'], $albumId]);
     }
 }

@@ -248,6 +248,39 @@ function coupleVideoUrl(): ?string
     return $path !== null ? mediaUrl($path) : null;
 }
 
+function defaultAmbientMusicPath(): string
+{
+    return 'assets/audio/ambient.mp3';
+}
+
+function ambientMusicPath(array $settings): string
+{
+    $path = trim($settings['ambient_music'] ?? '');
+    if ($path !== '') {
+        return $path;
+    }
+
+    return defaultAmbientMusicPath();
+}
+
+function ambientMusicUrl(array $settings): string
+{
+    return mediaUrl(ambientMusicPath($settings));
+}
+
+function ambientMusicMime(string $path): string
+{
+    $clean = parse_url($path, PHP_URL_PATH) ?: $path;
+    $ext = strtolower(pathinfo($clean, PATHINFO_EXTENSION));
+
+    return match ($ext) {
+        'ogg' => 'audio/ogg',
+        'wav' => 'audio/wav',
+        'm4a', 'aac' => 'audio/mp4',
+        default => 'audio/mpeg',
+    };
+}
+
 function handleMediaUpload(array $file, string $prefix = 'media'): ?string
 {
     if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
@@ -265,6 +298,37 @@ function handleMediaUpload(array $file, string $prefix = 'media'): ?string
 
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $filename = $prefix . '_' . uniqid() . ($ext ? ".{$ext}" : '');
+    $dest = $uploadDir . $filename;
+
+    if (move_uploaded_file($file['tmp_name'], $dest)) {
+        return 'assets/uploads/' . $filename;
+    }
+
+    return null;
+}
+
+function handleAudioUpload(array $file, string $prefix = 'music'): ?string
+{
+    if (empty($file['tmp_name']) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        return null;
+    }
+
+    if (isServerless()) {
+        return null;
+    }
+
+    $allowed = ['mp3', 'mpeg', 'ogg', 'wav', 'm4a', 'aac'];
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    if (!in_array($ext, $allowed, true)) {
+        return null;
+    }
+
+    $uploadDir = publicRoot() . '/assets/uploads/';
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0755, true);
+    }
+
+    $filename = $prefix . '_' . uniqid() . ".{$ext}";
     $dest = $uploadDir . $filename;
 
     if (move_uploaded_file($file['tmp_name'], $dest)) {

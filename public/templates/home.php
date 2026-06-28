@@ -23,7 +23,7 @@
 <body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="100" class="intro-active">
 
 <audio id="ambientMusic" loop preload="auto">
-    <source src="/assets/audio/ambient.mp3" type="audio/mpeg">
+    <source src="<?= sanitize(ambientMusicUrl($settings)) ?>" type="<?= sanitize(ambientMusicMime(ambientMusicPath($settings))) ?>">
 </audio>
 
 <button type="button"
