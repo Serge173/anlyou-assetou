@@ -146,7 +146,8 @@ ob_start();
     </div>
     <div class="col-lg-8">
         <div class="admin-card">
-            <h3>Sections (<?= count($albums) ?>)</h3>
+            <h3>Sections — Notre Histoire</h3>
+            <p class="text-muted small mb-3">Toutes les photos s'affichent dans un seul bloc sur le site public. Une section suffit pour regrouper vos souvenirs.</p>
             <?php if (empty($albums)): ?>
             <p class="text-muted">Aucune section. Créez votre première section photo.</p>
             <?php else: ?>

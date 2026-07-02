@@ -15,31 +15,88 @@ function defaultInvitationCoverPath(): string
 function defaultStoryGalleryPhotos(): array
 {
     return [
-        1 => [
-            'title' => 'Notre premier regard',
-            'path' => 'assets/images/gallery/assetou-1.png',
-        ],
-        2 => [
-            'title' => 'La demande',
-            'path' => 'assets/images/gallery/assetou-2.png',
-        ],
-        3 => [
-            'title' => 'Aventure à deux',
-            'path' => 'assets/images/gallery/assetou-3.png',
-        ],
-        4 => [
-            'title' => 'Anniversaire surprise',
-            'path' => 'assets/images/gallery/assetou-4.png',
-        ],
-        5 => [
-            'title' => 'Ensemble pour toujours',
-            'path' => 'assets/images/gallery/assetou-5.png',
-        ],
-        6 => [
-            'title' => 'Portrait du couple',
-            'path' => 'assets/images/gallery/assetou-5.png',
-        ],
+        ['title' => 'Notre premier regard', 'path' => 'assets/images/gallery/assetou-1.png'],
+        ['title' => 'La demande', 'path' => 'assets/images/gallery/assetou-2.png'],
+        ['title' => 'Aventure à deux', 'path' => 'assets/images/gallery/assetou-3.png'],
+        ['title' => 'Anniversaire surprise', 'path' => 'assets/images/gallery/assetou-4.png'],
+        ['title' => 'Ensemble pour toujours', 'path' => 'assets/images/gallery/assetou-5.png'],
+        ['title' => 'Portrait du couple', 'path' => 'assets/images/gallery/assetou-5.png'],
     ];
+}
+
+function mergeStoryGalleryIntoSingleBlock(PDO $pdo): void
+{
+    if (!tableExists($pdo, 'gallery_albums') || !tableExists($pdo, 'gallery_photos')) {
+        return;
+    }
+
+    $albumCount = (int) $pdo->query('SELECT COUNT(*) FROM gallery_albums')->fetchColumn();
+    if ($albumCount <= 1) {
+        $albumId = (int) $pdo->query('SELECT id FROM gallery_albums ORDER BY sort_order ASC, id ASC LIMIT 1')->fetchColumn();
+        if ($albumId > 0) {
+            $stmt = $pdo->prepare(
+                'UPDATE gallery_albums SET name = ?, slug = ?, description = ?, sort_order = 1 WHERE id = ?'
+            );
+            $stmt->execute([
+                'Notre histoire',
+                'notre-histoire',
+                'Les moments qui ont écrit notre belle histoire',
+                $albumId,
+            ]);
+        }
+
+        return;
+    }
+
+    $existing = $pdo->query("SELECT id FROM gallery_albums WHERE slug = 'notre-histoire' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    if ($existing) {
+        $targetId = (int) $existing['id'];
+    } else {
+        if (isPostgres($pdo)) {
+            $pdo->prepare(
+                'INSERT INTO gallery_albums (name, slug, description, sort_order) VALUES (?, ?, ?, ?)'
+            )->execute([
+                'Notre histoire',
+                'notre-histoire',
+                'Les moments qui ont écrit notre belle histoire',
+                1,
+            ]);
+            $targetId = (int) $pdo->query("SELECT id FROM gallery_albums WHERE slug = 'notre-histoire' LIMIT 1")->fetchColumn();
+        } else {
+            $pdo->prepare(
+                'INSERT INTO gallery_albums (name, slug, description, sort_order) VALUES (?, ?, ?, ?)'
+            )->execute([
+                'Notre histoire',
+                'notre-histoire',
+                'Les moments qui ont écrit notre belle histoire',
+                1,
+            ]);
+            $targetId = (int) $pdo->lastInsertId();
+        }
+    }
+
+    $photos = $pdo->query(
+        'SELECT p.id
+         FROM gallery_photos p
+         JOIN gallery_albums a ON p.album_id = a.id
+         ORDER BY a.sort_order ASC, a.id ASC, p.sort_order ASC, p.id ASC'
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    $update = $pdo->prepare('UPDATE gallery_photos SET album_id = ?, sort_order = ? WHERE id = ?');
+    $sort = 1;
+    foreach ($photos as $photo) {
+        $update->execute([$targetId, $sort++, (int) $photo['id']]);
+    }
+
+    $pdo->prepare('DELETE FROM gallery_albums WHERE id != ?')->execute([$targetId]);
+    $pdo->prepare(
+        'UPDATE gallery_albums SET name = ?, slug = ?, description = ?, sort_order = 1 WHERE id = ?'
+    )->execute([
+        'Notre histoire',
+        'notre-histoire',
+        'Les moments qui ont écrit notre belle histoire',
+        $targetId,
+    ]);
 }
 
 /** @return list<string> Unsplash IDs retirés du CDN — à remplacer en prod */
@@ -139,7 +196,28 @@ function upgradeDefaultMedia(PDO $pdo): void
 
 function upgradeAssetouGalleryPhotos(PDO $pdo): void
 {
-    if (!tableExists($pdo, 'gallery_photos')) {
+    if (!tableExists($pdo, 'gallery_photos') || !tableExists($pdo, 'gallery_albums')) {
+        return;
+    }
+
+    mergeStoryGalleryIntoSingleBlock($pdo);
+
+    $albumId = (int) $pdo->query('SELECT id FROM gallery_albums ORDER BY sort_order ASC, id ASC LIMIT 1')->fetchColumn();
+    if ($albumId <= 0) {
+        return;
+    }
+
+    $photoCount = (int) $pdo->query('SELECT COUNT(*) FROM gallery_photos')->fetchColumn();
+    $defaults = defaultStoryGalleryPhotos();
+
+    if ($photoCount === 0) {
+        $insert = $pdo->prepare(
+            'INSERT INTO gallery_photos (album_id, title, file_path, sort_order) VALUES (?, ?, ?, ?)'
+        );
+        foreach ($defaults as $index => $photo) {
+            $insert->execute([$albumId, $photo['title'], $photo['path'], $index + 1]);
+        }
+
         return;
     }
 
@@ -151,10 +229,26 @@ function upgradeAssetouGalleryPhotos(PDO $pdo): void
         return;
     }
 
-    $updateStoryPhoto = $pdo->prepare(
-        'UPDATE gallery_photos SET file_path = ?, title = ? WHERE album_id = ?'
+    $existingStmt = $pdo->prepare(
+        'SELECT id FROM gallery_photos WHERE album_id = ? ORDER BY sort_order ASC, id ASC'
     );
-    foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
-        $updateStoryPhoto->execute([$photo['path'], $photo['title'], $albumId]);
+    $existingStmt->execute([$albumId]);
+    $existingIds = $existingStmt->fetchAll(PDO::FETCH_COLUMN);
+
+    $updateStoryPhoto = $pdo->prepare(
+        'UPDATE gallery_photos SET file_path = ?, title = ?, sort_order = ? WHERE id = ?'
+    );
+    $insertStoryPhoto = $pdo->prepare(
+        'INSERT INTO gallery_photos (album_id, title, file_path, sort_order) VALUES (?, ?, ?, ?)'
+    );
+
+    foreach ($defaults as $index => $photo) {
+        $sortOrder = $index + 1;
+        if (isset($existingIds[$index])) {
+            $updateStoryPhoto->execute([$photo['path'], $photo['title'], $sortOrder, (int) $existingIds[$index]]);
+            continue;
+        }
+
+        $insertStoryPhoto->execute([$albumId, $photo['title'], $photo['path'], $sortOrder]);
     }
 }

@@ -69,6 +69,7 @@ function adminLayout(string $title, string $content, string $activePage = ''): v
                 <button type="button" class="admin-menu-toggle" id="adminMenuToggle" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="adminSidebar">
                     <i class="bi bi-list admin-menu-icon-open" aria-hidden="true"></i>
                     <i class="bi bi-x-lg admin-menu-icon-close" aria-hidden="true"></i>
+                    <span class="admin-menu-toggle-label">Menu</span>
                 </button>
                 <h1><?= sanitize($title) ?></h1>
             </div>

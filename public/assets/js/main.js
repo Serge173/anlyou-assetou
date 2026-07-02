@@ -68,6 +68,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const navbar = document.getElementById('mainNav');
+    const siteNavOffcanvas = document.getElementById('siteNavOffcanvas');
+
+    if (siteNavOffcanvas && typeof bootstrap !== 'undefined') {
+        const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(siteNavOffcanvas);
+        siteNavOffcanvas.querySelectorAll('.nav-link').forEach((link) => {
+            link.addEventListener('click', () => {
+                if (siteNavOffcanvas.classList.contains('show')) {
+                    offcanvas.hide();
+                }
+            });
+        });
+    }
+
     const scrollToTopBtn = document.getElementById('scrollToTop');
     const handleScroll = () => {
         if (window.scrollY > 60) {

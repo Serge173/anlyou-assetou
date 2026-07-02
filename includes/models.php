@@ -36,7 +36,7 @@ function updateSettings(PDO $pdo, array $data): bool
 {
     $fields = [
         'bride_name', 'groom_name', 'wedding_date', 'start_time', 'end_time',
-        'civil_venue', 'religious_venue', 'reception_venue', 'gps_lat', 'gps_lng',
+        'civil_venue', 'religious_venue', 'reception_venue', 'kounkoli_venue', 'gps_lat', 'gps_lng',
         'welcome_title', 'welcome_message', 'invitation_text', 'hero_image',
         'invitation_card_image', 'ambient_music', 'ambient_music_preset',
         'contact_email', 'contact_phone', 'wedding_passed', 'album_enabled',

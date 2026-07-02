@@ -7,10 +7,14 @@ function startSession(): void
     $config = appConfig();
     if (session_status() === PHP_SESSION_NONE) {
         session_name($config['session_name']);
-        session_start([
-            'cookie_httponly' => true,
-            'cookie_samesite' => 'Lax',
+        session_set_cookie_params([
+            'lifetime' => 0,
+            'path' => '/',
+            'secure' => isHttpsRequest(),
+            'httponly' => true,
+            'samesite' => 'Lax',
         ]);
+        session_start();
     }
 }
 

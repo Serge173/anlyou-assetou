@@ -24,6 +24,17 @@ function isAdminRequest(): bool
     return str_starts_with($path, '/admin');
 }
 
+function isHttpsRequest(): bool
+{
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+        return true;
+    }
+
+    $forwardedProto = strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''));
+
+    return $forwardedProto === 'https';
+}
+
 function blockSensitiveRequest(): void
 {
     $path = currentRequestPath();
@@ -74,6 +85,10 @@ function sendSecurityHeaders(): void
     header('X-Permitted-Cross-Domain-Policies: none');
     header('Cross-Origin-Opener-Policy: same-origin');
     header('Cross-Origin-Resource-Policy: same-origin');
+
+    if (isHttpsRequest() && !appConfig()['debug']) {
+        header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+    }
 
     if (isAdminRequest()) {
         header('X-Robots-Tag: noindex, nofollow, noarchive');

@@ -15,17 +15,26 @@ function initAdminSidebar() {
     const sidebar = document.getElementById('adminSidebar');
     const backdrop = document.getElementById('adminSidebarBackdrop');
     const closeBtn = document.getElementById('adminSidebarClose');
+    const toggleLabel = toggle?.querySelector('.admin-menu-toggle-label');
+    const desktopQuery = window.matchMedia('(min-width: 1200px)');
     if (!toggle || !sidebar) {
         return;
     }
 
+    let scrollLockY = 0;
+
     const openMenu = () => {
+        scrollLockY = window.scrollY;
         sidebar.classList.add('is-open');
         backdrop?.classList.add('is-visible');
         document.body.classList.add('admin-nav-open');
+        document.body.style.top = `-${scrollLockY}px`;
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
         toggle.classList.add('is-active');
         toggle.setAttribute('aria-expanded', 'true');
         toggle.setAttribute('aria-label', 'Fermer le menu');
+        if (toggleLabel) toggleLabel.textContent = 'Fermer';
         backdrop?.setAttribute('aria-hidden', 'false');
     };
 
@@ -33,10 +42,21 @@ function initAdminSidebar() {
         sidebar.classList.remove('is-open');
         backdrop?.classList.remove('is-visible');
         document.body.classList.remove('admin-nav-open');
+        document.body.style.top = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollLockY);
         toggle.classList.remove('is-active');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.setAttribute('aria-label', 'Ouvrir le menu');
+        if (toggleLabel) toggleLabel.textContent = 'Menu';
         backdrop?.setAttribute('aria-hidden', 'true');
+    };
+
+    const syncMenuMode = () => {
+        if (desktopQuery.matches) {
+            closeMenu();
+        }
     };
 
     toggle.addEventListener('click', () => {
@@ -55,16 +75,13 @@ function initAdminSidebar() {
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
+        if (event.key === 'Escape' && sidebar.classList.contains('is-open')) {
             closeMenu();
         }
     });
 
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 992) {
-            closeMenu();
-        }
-    });
+    desktopQuery.addEventListener('change', syncMenuMode);
+    window.addEventListener('resize', syncMenuMode);
 }
 
 async function copyToClipboard(text) {

@@ -59,6 +59,8 @@ body {
 .sidebar-nav {
     flex: 1;
     padding: 1rem 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .sidebar-link {
@@ -66,6 +68,7 @@ body {
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
+    min-height: 48px;
     color: rgba(255,255,255,0.7);
     text-decoration: none;
     transition: all 0.2s;
@@ -113,16 +116,25 @@ body {
     display: none;
     align-items: center;
     justify-content: center;
-    width: 44px;
+    gap: 0.45rem;
+    min-width: 44px;
     height: 44px;
-    padding: 0;
+    padding: 0 0.85rem;
     border: 1px solid rgba(10, 22, 40, 0.12);
     border-radius: 10px;
     background: #fff;
     color: var(--admin-sidebar);
     flex-shrink: 0;
     cursor: pointer;
+    touch-action: manipulation;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.admin-menu-toggle-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .admin-menu-toggle:hover {
@@ -158,14 +170,15 @@ body {
     position: absolute;
     top: 0.85rem;
     right: 0.85rem;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     padding: 0;
     border: none;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.08);
     color: #fff;
     cursor: pointer;
+    touch-action: manipulation;
     align-items: center;
     justify-content: center;
     transition: background 0.2s, color 0.2s;
@@ -521,7 +534,7 @@ body {
     margin-top: 0.5rem;
 }
 
-@media (max-width: 991.98px) {
+@media (max-width: 1199.98px) {
     .admin-menu-toggle {
         display: inline-flex;
     }
@@ -530,15 +543,21 @@ body {
         display: inline-flex;
     }
 
+    .admin-header {
+        z-index: 1060;
+    }
+
     .sidebar-brand {
         padding-right: 3.25rem;
     }
 
     .admin-sidebar {
-        width: min(300px, 88vw);
+        width: min(320px, 86vw);
         transform: translateX(-105%);
         transition: transform 0.28s ease;
         box-shadow: 8px 0 32px rgba(0, 0, 0, 0.28);
+        z-index: 1070;
+        overflow: hidden;
     }
 
     .admin-sidebar.is-open {
@@ -552,6 +571,7 @@ body {
         background: rgba(10, 22, 40, 0.55);
         opacity: 0;
         visibility: hidden;
+        pointer-events: none;
         transition: opacity 0.28s ease, visibility 0.28s ease;
         z-index: 1040;
     }
@@ -559,15 +579,18 @@ body {
     .admin-sidebar-backdrop.is-visible {
         opacity: 1;
         visibility: visible;
+        pointer-events: auto;
     }
 
     body.admin-nav-open {
         overflow: hidden;
+        touch-action: none;
     }
 
     .admin-main {
         margin-left: 0;
         width: 100%;
+        min-width: 0;
     }
 
     .admin-header {
@@ -575,24 +598,24 @@ body {
     }
 
     .admin-header h1 {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
         line-height: 1.25;
     }
 
     .admin-user {
-        font-size: 0.78rem;
-        max-width: 42vw;
+        font-size: 0.82rem;
+        max-width: 36vw;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
     .admin-content {
-        padding: 1rem;
+        padding: 1.25rem;
     }
 
     .admin-card {
-        padding: 1rem;
+        padding: 1.15rem;
     }
 
     .couple-dashboard-banner {
@@ -600,7 +623,7 @@ body {
     }
 
     .couple-dashboard-banner h2 {
-        font-size: 1.2rem;
+        font-size: 1.25rem;
     }
 
     .invite-share-actions {
@@ -618,6 +641,17 @@ body {
     .login-card {
         margin: 1rem;
         padding: 1.75rem;
+    }
+
+    .sidebar-link {
+        font-size: 0.95rem;
+        padding: 0.85rem 1.35rem;
+    }
+
+    .sidebar-link i {
+        font-size: 1.15rem;
+        width: 1.35rem;
+        text-align: center;
     }
 }
 

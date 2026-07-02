@@ -46,6 +46,14 @@ $groomInitial = coupleInitial($settings['groom_name'] ?? null);
 $brideInitial = coupleInitial($settings['bride_name'] ?? null);
 $invitationCardBg = invitationCardImageUrl($settings);
 $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
+$siteNavLinks = [
+    ['href' => '#hero', 'label' => 'Accueil', 'icon' => 'house-heart'],
+    ['href' => '#details', 'label' => 'Détails', 'icon' => 'calendar-heart'],
+    ['href' => '#rsvp', 'label' => 'RSVP', 'icon' => 'envelope-check'],
+    ['href' => '#story', 'label' => 'Notre Histoire', 'icon' => 'heart'],
+    ['href' => '#album', 'label' => 'Album', 'icon' => 'images'],
+    ['href' => '#guestbook', 'label' => "Livre d'or", 'icon' => 'book'],
+];
 ?>
 
 <!-- 1. Écran de chargement cinématographique -->
@@ -102,22 +110,29 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
 <div id="mainSite" class="main-site is-hidden">
 
 <!-- Navigation -->
-<nav id="mainNav" class="navbar navbar-expand-lg fixed-top">
+<nav id="mainNav" class="navbar navbar-expand-xl fixed-top">
     <div class="container">
         <a class="navbar-brand" href="#hero">
             <img src="<?= sanitize(brandLogoUrl()) ?>" alt="<?= sanitize(brandName()) ?>" class="brand-logo">
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler site-nav-toggler d-xl-none"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#siteNavOffcanvas"
+                aria-controls="siteNavOffcanvas"
+                aria-label="Ouvrir le menu">
+            <i class="bi bi-list site-nav-toggler-icon" aria-hidden="true"></i>
         </button>
-        <div class="collapse navbar-collapse" id="navMenu">
+        <div class="collapse navbar-collapse site-nav-desktop" id="navMenu">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="#hero">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="#details">Détails</a></li>
-                <li class="nav-item"><a class="nav-link" href="#rsvp">RSVP</a></li>
-                <li class="nav-item"><a class="nav-link" href="#story">Notre Histoire</a></li>
-                <li class="nav-item"><a class="nav-link" href="#album">Album</a></li>
-                <li class="nav-item"><a class="nav-link" href="#guestbook">Livre d'or</a></li>
+                <?php foreach ($siteNavLinks as $navLink): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= sanitize($navLink['href']) ?>">
+                        <i class="bi bi-<?= sanitize($navLink['icon']) ?> nav-link-icon" aria-hidden="true"></i>
+                        <span><?= sanitize($navLink['label']) ?></span>
+                    </a>
+                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
     </div>
@@ -211,67 +226,65 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
             <div class="title-divider"></div>
         </div>
 
-        <div class="details-grid">
-            <div class="row g-3 mt-2">
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-calendar-heart"></i></div>
-                        <h3>Date &amp; Heure</h3>
-                        <p class="detail-main"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
-                        <p class="detail-sub"><?= sanitize($settings['start_time'] ?? '') ?> — <?= sanitize($settings['end_time'] ?? '') ?></p>
-                    </div>
+        <div class="wedding-program" data-aos="fade-up">
+            <?php foreach (weddingProgramDays($settings) as $dayIndex => $day): ?>
+            <?php
+            $dayEvents = array_values(array_filter(
+                $day['events'],
+                static fn(array $event): bool => trim($event['text'] ?? '') !== ''
+            ));
+            if ($dayEvents === []) {
+                continue;
+            }
+            ?>
+            <section class="program-day" data-aos="fade-up" data-aos-delay="<?= $dayIndex * 80 ?>">
+                <header class="program-day-header">
+                    <span class="program-day-badge">Programme</span>
+                    <h3 class="program-day-title"><?= sanitize($day['heading']) ?></h3>
+                </header>
+                <div class="program-events">
+                    <?php foreach ($dayEvents as $eventIndex => $event): ?>
+                    <article class="program-event">
+                        <div class="program-event-marker" aria-hidden="true">
+                            <span class="program-event-dot"></span>
+                            <?php if ($eventIndex < count($dayEvents) - 1): ?>
+                            <span class="program-event-line"></span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="program-event-card">
+                            <div class="program-event-icon">
+                                <i class="bi bi-<?= sanitize($event['icon']) ?>" aria-hidden="true"></i>
+                            </div>
+                            <div class="program-event-content">
+                                <h4 class="program-event-title"><?= sanitize($event['title']) ?></h4>
+                                <p class="program-event-text"><?= nl2br(sanitize($event['text'])) ?></p>
+                            </div>
+                        </div>
+                    </article>
+                    <?php endforeach; ?>
                 </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="150">
-                    <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-moon-stars"></i></div>
-                        <h3>Célébration du mariage</h3>
-                        <p class="detail-main"><?= nl2br(sanitize($settings['religious_venue'] ?? '')) ?></p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-cup-straw"></i></div>
-                        <h3>La réception</h3>
-                        <p class="detail-main"><?= nl2br(sanitize($settings['reception_venue'] ?? '')) ?></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-3 mt-1">
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="250">
-                    <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-music-note-beamed"></i></div>
-                        <h3>Danse de réjouissance</h3>
-                        <p class="detail-main"><?= nl2br(sanitize($settings['civil_venue'] ?? '')) ?></p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-geo-alt"></i></div>
-                        <h3>Coordonnées GPS</h3>
-                        <p class="detail-main"><?= number_format((float)($settings['gps_lat'] ?? 0), 4) ?>, <?= number_format((float)($settings['gps_lng'] ?? 0), 4) ?></p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="350">
-                    <div class="detail-card">
-                        <div class="detail-icon"><i class="bi bi-map"></i></div>
-                        <h3>Itinéraire</h3>
-                        <p class="detail-main">Trouvez le chemin jusqu'au lieu</p>
-                        <a href="<?= sanitize(mapDirectionsUrl($settings)) ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm detail-map-btn">
-                            Google Maps
-                        </a>
-                    </div>
-                </div>
-            </div>
+            </section>
+            <?php endforeach; ?>
         </div>
 
-        <div class="map-container mt-4" data-aos="fade-up">
-            <iframe
-                src="<?= sanitize(mapEmbedUrl($settings)) ?>"
-                width="100%" height="280" style="border:0;" allowfullscreen="" loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Carte du lieu du mariage">
-            </iframe>
+        <div class="details-map-block" data-aos="fade-up">
+            <div class="details-map-header">
+                <div>
+                    <span class="section-label">Localisation</span>
+                    <h3 class="details-map-title">Itinéraire &amp; carte</h3>
+                </div>
+                <a href="<?= sanitize(mapDirectionsUrl($settings)) ?>" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm">
+                    Ouvrir dans Google Maps
+                </a>
+            </div>
+            <div class="map-container">
+                <iframe
+                    src="<?= sanitize(mapEmbedUrl($settings)) ?>"
+                    width="100%" height="320" style="border:0;" allowfullscreen="" loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Carte du lieu du mariage">
+                </iframe>
+            </div>
         </div>
     </div>
 </section>
@@ -399,34 +412,10 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
         <?php endif; ?>
 
         <?php if (!empty($galleryPhotos)): ?>
-        <div class="photo-carousel photo-carousel--hero mb-5" data-aos="fade-up">
-            <button type="button" class="photo-carousel-btn photo-carousel-prev" aria-label="Photo précédente">
-                <i class="bi bi-chevron-left" aria-hidden="true"></i>
-            </button>
-            <div class="photo-carousel-viewport">
-                <div class="photo-carousel-track">
-                    <?php foreach ($galleryPhotos as $photo): ?>
-                    <div class="photo-carousel-slide photo-carousel-slide--hero">
-                        <img src="<?= sanitize(mediaUrl($photo['file_path'])) ?>" alt="<?= sanitize($photo['title'] ?? '') ?>" loading="lazy">
-                        <div class="slider-caption"><?= sanitize($photo['title'] ?? $photo['album_name'] ?? '') ?></div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-            <button type="button" class="photo-carousel-btn photo-carousel-next" aria-label="Photo suivante">
-                <i class="bi bi-chevron-right" aria-hidden="true"></i>
-            </button>
-        </div>
-        <?php endif; ?>
-
-        <?php foreach ($galleryAlbums as $album): ?>
-        <?php if (empty($album['photos'])) continue; ?>
-        <div class="story-album-block mb-5" data-aos="fade-up">
+        <div class="story-album-block story-album-block--unified mb-5" data-aos="fade-up">
             <div class="story-album-header text-center mb-4">
-                <h3 class="story-album-title"><?= sanitize($album['name']) ?></h3>
-                <?php if (!empty($album['description'])): ?>
-                <p class="story-album-desc"><?= sanitize($album['description']) ?></p>
-                <?php endif; ?>
+                <h3 class="story-album-title">Notre histoire</h3>
+                <p class="story-album-desc">Les moments qui ont écrit notre belle histoire</p>
             </div>
             <div class="photo-carousel photo-carousel--gallery">
                 <button type="button" class="photo-carousel-btn photo-carousel-prev" aria-label="Photo précédente">
@@ -434,8 +423,8 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
                 </button>
                 <div class="photo-carousel-viewport">
                     <div class="photo-carousel-track">
-                        <?php foreach ($album['photos'] as $i => $photo): ?>
-                        <a href="<?= sanitize(mediaUrl($photo['file_path'])) ?>" class="gallery-item glightbox photo-carousel-slide" data-gallery="story-<?= (int) $album['id'] ?>" data-aos="fade-up" data-aos-delay="<?= ($i % 6) * 80 ?>">
+                        <?php foreach ($galleryPhotos as $i => $photo): ?>
+                        <a href="<?= sanitize(mediaUrl($photo['file_path'])) ?>" class="gallery-item glightbox photo-carousel-slide" data-gallery="story-gallery" data-aos="fade-up" data-aos-delay="<?= ($i % 6) * 80 ?>">
                             <img src="<?= sanitize(mediaUrl($photo['file_path'])) ?>" alt="<?= sanitize($photo['title'] ?? '') ?>" loading="lazy">
                             <div class="gallery-overlay">
                                 <span><?= sanitize($photo['title'] ?? '') ?></span>
@@ -449,9 +438,7 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
                 </button>
             </div>
         </div>
-        <?php endforeach; ?>
-
-        <?php if (empty($galleryAlbums) || empty($galleryPhotos)): ?>
+        <?php else: ?>
         <p class="text-center text-muted">Les photos de notre histoire seront bientôt disponibles.</p>
         <?php endif; ?>
     </div>
@@ -591,11 +578,41 @@ $heroImageUrl = mediaUrl($settings['hero_image'] ?? defaultCouplePhotoPath());
     <div class="container text-center">
         <p class="footer-names"><?= sanitize(coupleLabel($settings)) ?></p>
         <p class="footer-date"><?= formatFrenchDate($settings['wedding_date'] ?? '') ?></p>
-        <p class="footer-copy">&copy; <?= date('Y') ?> — Avec tout notre amour</p>
+        <p class="footer-copy">&copy; <?= date('Y') ?> — by Kdigit : <a href="tel:+2250708967624" class="footer-kdigit-link">+225 0708967624</a></p>
     </div>
 </footer>
 
 </div><!-- #mainSite -->
+
+<div class="offcanvas offcanvas-end site-nav-offcanvas"
+     tabindex="-1"
+     id="siteNavOffcanvas"
+     aria-labelledby="siteNavOffcanvasLabel">
+    <div class="offcanvas-header site-nav-offcanvas-header">
+        <div class="site-nav-offcanvas-brand">
+            <img src="<?= sanitize(brandLogoUrl()) ?>" alt="<?= sanitize(brandName()) ?>" class="site-nav-offcanvas-logo">
+            <span id="siteNavOffcanvasLabel" class="visually-hidden"><?= sanitize(brandName()) ?> — Menu</span>
+        </div>
+        <button type="button"
+                class="site-nav-offcanvas-close"
+                data-bs-dismiss="offcanvas"
+                aria-label="Fermer le menu">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+    <div class="offcanvas-body site-nav-offcanvas-body">
+        <ul class="navbar-nav site-nav-offcanvas-links">
+            <?php foreach ($siteNavLinks as $navLink): ?>
+            <li class="nav-item">
+                <a class="nav-link" href="<?= sanitize($navLink['href']) ?>" data-bs-dismiss="offcanvas">
+                    <i class="bi bi-<?= sanitize($navLink['icon']) ?> nav-link-icon" aria-hidden="true"></i>
+                    <span><?= sanitize($navLink['label']) ?></span>
+                </a>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+</div>
 
 <button type="button" class="scroll-to-top" id="scrollToTop" aria-label="Remonter en haut de la page" title="Retour en haut">
     <i class="bi bi-chevron-up" aria-hidden="true"></i>

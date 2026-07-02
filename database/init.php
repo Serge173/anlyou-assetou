@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../includes/default-media.php';
 
 function initializeDatabase(PDO $pdo): void
@@ -104,6 +105,36 @@ function runMigrations(PDO $pdo): void
     upgradeDefaultMedia($pdo);
     migrateAssetouWeddingDetails($pdo);
     migrateCoupleNameOrder($pdo);
+    migrateKounkoliVenue($pdo);
+}
+
+function migrateKounkoliVenue(PDO $pdo): void
+{
+    if (!tableExists($pdo, 'settings')) {
+        return;
+    }
+
+    if (!columnExists($pdo, 'settings', 'kounkoli_venue')) {
+        if (isPostgres($pdo)) {
+            $pdo->exec('ALTER TABLE settings ADD COLUMN kounkoli_venue TEXT DEFAULT NULL');
+        } else {
+            $pdo->exec('ALTER TABLE settings ADD COLUMN kounkoli_venue TEXT DEFAULT NULL');
+        }
+    }
+
+    $default = defaultKounkoliVenueText();
+    $stmt = $pdo->prepare(
+        'UPDATE settings SET kounkoli_venue = ? WHERE id = 1 AND (kounkoli_venue IS NULL OR TRIM(kounkoli_venue) = \'\')'
+    );
+    $stmt->execute([$default]);
+
+    $stmt = $pdo->prepare(
+        'UPDATE settings SET kounkoli_venue = ? WHERE id = 1 AND (
+            kounkoli_venue = ?
+            OR kounkoli_venue LIKE ?
+        )'
+    );
+    $stmt->execute([$default, '15h00 — 17h30', '%Jeudi 30 juillet 2026%']);
 }
 
 function migrateCoupleNameOrder(PDO $pdo): void
@@ -131,6 +162,7 @@ function migrateAssetouWeddingDetails(PDO $pdo): void
     $invitationText = "Si vous avez reçu ce lien, c'est que vous êtes notre heureux invité ou notre heureuse invitée VVIP.\n\nNous avons l'immense joie de vous inviter à célébrer notre union : la célébration du mariage à la Mosquée Salam, la réception à la Salle TENE BRAHIMA OUATTARA, et la danse de réjouissance au centre social Attécoubé. Votre présence sera notre plus belle joie.";
     $religiousVenue = "Mosquée Salam, en face du super marché Bon Prix d'Attécoubé\nJeudi 30 juillet 2026 à 09h00";
     $receptionVenue = "Salle TENE BRAHIMA OUATTARA, Hôtel des Armées (État Major) du Plateau, Abidjan\nJeudi 30 juillet 2026 à 11h00";
+    $kounkoliVenue = defaultKounkoliVenueText();
     $civilVenue = "Centre social Attécoubé\nDimanche 2 août 2026 à 14h00";
     $cardImage = 'assets/images/carte-invitation-assetou.png';
     $coverImage = 'assets/images/couple-couverture.png';
@@ -142,6 +174,7 @@ function migrateAssetouWeddingDetails(PDO $pdo): void
             end_time = ?,
             religious_venue = ?,
             reception_venue = ?,
+            kounkoli_venue = ?,
             civil_venue = ?,
             welcome_title = ?,
             welcome_message = ?,
@@ -159,6 +192,7 @@ function migrateAssetouWeddingDetails(PDO $pdo): void
         '23:00',
         $religiousVenue,
         $receptionVenue,
+        $kounkoliVenue,
         $civilVenue,
         $welcomeTitle,
         $welcomeMessage,
@@ -434,26 +468,21 @@ function seedDefaultData(PDO $pdo): void
 
     $albumCount = (int) $pdo->query('SELECT COUNT(*) FROM gallery_albums')->fetchColumn();
     if ($albumCount === 0) {
-        $albums = [
-            ['Première rencontre', 'premiere-rencontre', 'Le jour où tout a commencé', 1],
-            ['Fiançailles', 'fiancailles', 'Une demande inoubliable', 2],
-            ['Voyages', 'voyages', 'Nos aventures ensemble', 3],
-            ['Anniversaires', 'anniversaires', 'Célébrations mémorables', 4],
-            ['Moments importants', 'moments', 'Les instants qui comptent', 5],
-            ['Séances photo', 'seances-photo', 'Portraits du couple', 6],
-        ];
         $stmt = $pdo->prepare('INSERT INTO gallery_albums (name, slug, description, sort_order) VALUES (?, ?, ?, ?)');
-        foreach ($albums as $album) {
-            $stmt->execute($album);
-        }
+        $stmt->execute([
+            'Notre histoire',
+            'notre-histoire',
+            'Les moments qui ont écrit notre belle histoire',
+            1,
+        ]);
 
-        $photos = [];
-        foreach (defaultStoryGalleryPhotos() as $albumId => $photo) {
-            $photos[] = [$albumId, $photo['title'], $photo['path'], 1];
-        }
+        $albumId = isPostgres($pdo)
+            ? (int) $pdo->query("SELECT id FROM gallery_albums WHERE slug = 'notre-histoire' LIMIT 1")->fetchColumn()
+            : (int) $pdo->lastInsertId();
+
         $photoStmt = $pdo->prepare('INSERT INTO gallery_photos (album_id, title, file_path, sort_order) VALUES (?, ?, ?, ?)');
-        foreach ($photos as $photo) {
-            $photoStmt->execute($photo);
+        foreach (defaultStoryGalleryPhotos() as $index => $photo) {
+            $photoStmt->execute([$albumId, $photo['title'], $photo['path'], $index + 1]);
         }
     }
 

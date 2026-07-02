@@ -275,6 +275,54 @@ function isCountdownEnabled(array $settings): bool
     return (bool) ($settings['countdown_enabled'] ?? true);
 }
 
+function defaultKounkoliVenueText(): string
+{
+    return "Lavage de la tête de la mariée\nAu domicile de la mariée\n15h00 — 17h30";
+}
+
+function kounkoliVenueText(array $settings): string
+{
+    $text = trim($settings['kounkoli_venue'] ?? '');
+
+    return $text !== '' ? $text : defaultKounkoliVenueText();
+}
+
+function weddingProgramDays(array $settings): array
+{
+    return [
+        [
+            'heading' => 'Jeudi 30 juillet 2026',
+            'events' => [
+                [
+                    'title' => 'Célébration du mariage',
+                    'icon' => 'moon-stars',
+                    'text' => trim($settings['religious_venue'] ?? ''),
+                ],
+                [
+                    'title' => 'La réception',
+                    'icon' => 'cup-straw',
+                    'text' => trim($settings['reception_venue'] ?? ''),
+                ],
+                [
+                    'title' => 'Kounkoli',
+                    'icon' => 'balloon-heart',
+                    'text' => kounkoliVenueText($settings),
+                ],
+            ],
+        ],
+        [
+            'heading' => 'Dimanche 2 août 2026',
+            'events' => [
+                [
+                    'title' => 'Danse de réjouissance',
+                    'icon' => 'music-note-beamed',
+                    'text' => trim($settings['civil_venue'] ?? ''),
+                ],
+            ],
+        ],
+    ];
+}
+
 function mapCoordinates(array $settings): array
 {
     return [

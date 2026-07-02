@@ -16,8 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'civil_venue' => trim($_POST['civil_venue'] ?? ''),
         'religious_venue' => trim($_POST['religious_venue'] ?? ''),
         'reception_venue' => trim($_POST['reception_venue'] ?? ''),
-        'gps_lat' => (float) ($_POST['gps_lat'] ?? 0),
-        'gps_lng' => (float) ($_POST['gps_lng'] ?? 0),
+        'kounkoli_venue' => trim($_POST['kounkoli_venue'] ?? ''),
         'welcome_title' => trim($_POST['welcome_title'] ?? ''),
         'welcome_message' => trim($_POST['welcome_message'] ?? ''),
         'invitation_text' => trim($_POST['invitation_text'] ?? ''),
@@ -282,8 +281,7 @@ ob_start();
                     <div class="col-12"><label class="form-label">Célébration du mariage</label><textarea name="religious_venue" class="form-control" rows="2"><?= sanitize($settings['religious_venue'] ?? '') ?></textarea></div>
                     <div class="col-12"><label class="form-label">La réception</label><textarea name="reception_venue" class="form-control" rows="2"><?= sanitize($settings['reception_venue'] ?? '') ?></textarea></div>
                     <div class="col-12"><label class="form-label">Danse de réjouissance</label><textarea name="civil_venue" class="form-control" rows="2"><?= sanitize($settings['civil_venue'] ?? '') ?></textarea></div>
-                    <div class="col-md-6"><label class="form-label">GPS Latitude</label><input type="number" step="any" name="gps_lat" class="form-control" value="<?= sanitize((string)($settings['gps_lat'] ?? '')) ?>"></div>
-                    <div class="col-md-6"><label class="form-label">GPS Longitude</label><input type="number" step="any" name="gps_lng" class="form-control" value="<?= sanitize((string)($settings['gps_lng'] ?? '')) ?>"></div>
+                    <div class="col-12"><label class="form-label">Kounkoli</label><textarea name="kounkoli_venue" class="form-control" rows="3" placeholder="Lavage de la tête de la mariée&#10;Au domicile de la mariée&#10;15h00 — 17h30"><?= sanitize($settings['kounkoli_venue'] ?? '') ?></textarea></div>
                 </div>
             </div>
         </div>
